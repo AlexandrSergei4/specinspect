@@ -136,11 +136,11 @@ kotlin {
 }
 
 android {
-    namespace = "com.alki.salalads"
+    namespace = "com.alki.specinspect"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "com.alki.salalads"
+        applicationId = "com.alki.specinspect"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
@@ -177,11 +177,11 @@ dependencies {
 
 //compose.desktop {
 //    application {
-//        mainClass = "com.alki.salalads.MainKt"
+//        mainClass = "com.alki.specinspect.MainKt"
 //
 //        nativeDistributions {
 //            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-//            packageName = "com.alki.salalads"
+//            packageName = "com.alki.specinspect"
 //            packageVersion = "1.0.0"
 //        }
 //    }

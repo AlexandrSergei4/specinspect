@@ -1,5 +1,5 @@
 // Service Worker для PWA Салаладс
-const CACHE_NAME = 'salalads-v1';
+const CACHE_NAME = 'specinspect-v1';
 
 // Файлы для кэширования при установке
 const PRECACHE_ASSETS = [

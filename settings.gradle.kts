@@ -1,4 +1,4 @@
-rootProject.name = "salalads"
+rootProject.name = "specinspect"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
