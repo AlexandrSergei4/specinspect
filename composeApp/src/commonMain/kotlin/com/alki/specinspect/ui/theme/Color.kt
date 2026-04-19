@@ -3,59 +3,30 @@ package com.alki.specinspect.ui.theme
 import androidx.compose.ui.graphics.Color
 
 /**
- * Цветовая палитра SampleColors
- * Стиль: Smart Minimalism + New Year + Cartoon
+ * Палитра SpecInspect — Soft Consumer Minimalism
  */
-object SampleColors {
-    // Основные новогодние цвета
-    val ChristmasRed = Color(0xFFE53935)        // Яркий красный
-    val ChristmasGreen = Color(0xFF43A047)       // Ёлочный зеленый
-    val ChristmasGold = Color(0xFFFFD54F)        // Золотой
-    val SnowWhite = Color(0xFFFAFAFA)            // Снежно-белый
-    val MidnightBlue = Color(0xFF1A237E)         // Полуночный синий
+object AppColors {
+    val Dark = Color(0xFF272838)         // основной фон кнопок, текст
+    val Yellow = Color(0xFFF3DE8A)       // акценты, секция THEN
+    val Coral = Color(0xFFEB9486)        // некорректные карточки, кнопка "влево"
+    val GreyViolet = Color(0xFF7E7F9A)   // вторичный текст, границы
+    val Light = Color(0xFFF9F8F8)        // основной фон
+    val Teal = Color(0xFF77A0A9)         // корректные карточки, кнопка "вправо", WHEN
 
-    // Мягкие пастельные оттенки для минимализма
-    val SoftRed = Color(0xFFFFCDD2)              // Мягкий красный
-    val SoftGreen = Color(0xFFC8E6C9)            // Мягкий зеленый
-    val SoftGold = Color(0xFFFFF9C4)             // Мягкий золотой
-    val SoftBlue = Color(0xFFE3F2FD)             // Мягкий голубой
-
-    // Cartoon-style яркие акценты
-    val CartoonOrange = Color(0xFFFF7043)        // Мультяшный оранжевый
-    val CartoonPink = Color(0xFFEC407A)          // Мультяшный розовый
-    val CartoonPurple = Color(0xFF7E57C2)        // Мультяшный фиолетовый
-    val CartoonTeal = Color(0xFF26A69A)          // Мультяшный бирюзовый
-
-    // Нейтральные тона
-    val Background = Color(0xFFFFFBFE)           // Основной фон
-    val Surface = Color(0xFFFFFFFF)              // Поверхность
-    val SurfaceVariant = Color(0xFFF5F5F5)       // Вариант поверхности
-    val OnBackground = Color(0xFF1C1B1F)         // Текст на фоне
-    val OnSurface = Color(0xFF1C1B1F)            // Текст на поверхности
-    val OnSurfaceVariant = Color(0xFF757575)     // Вторичный текст
-
-    // Градиент новогодний
-    val GradientStart = Color(0xFFE53935)
-    val GradientMiddle = Color(0xFFFFD54F)
-    val GradientEnd = Color(0xFF43A047)
-
-    // Состояния
-    val Success = ChristmasGreen
-    val Error = ChristmasRed
-    val Warning = ChristmasGold
-    val Info = MidnightBlue
-
-    // Карточки
-    val CardBackground = Color(0xFFFFFFFF)
-    val CardBorder = Color(0xFFE0E0E0)
+    val White = Color(0xFFFFFFFF)
+    val CardBorder = Color(0x337E7F9A)   // GreyViolet @20%
+    val CardBorderStrong = Color(0x4D7E7F9A) // @30%
     val CardShadow = Color(0x1A000000)
 
-    // Кнопки
-    val PrimaryButton = ChristmasRed
-    val SecondaryButton = ChristmasGreen
-    val DisabledButton = Color(0xFFBDBDBD)
+    val TealSurface = Color(0x1A77A0A9)  // 10%
+    val TealBorder = Color(0x4D77A0A9)   // 30%
 
-    // Прогресс
-    val ProgressBackground = Color(0xFFE0E0E0)
-    val ProgressFilled = ChristmasGreen
+    val CoralSurface = Color(0x1AEB9486) // 10%
+    val CoralBorder = Color(0x4DEB9486)  // 30%
+
+    val YellowSurface = Color(0x33F3DE8A) // 20%
+    val YellowBorder = Color(0x80F3DE8A)  // 50%
+
+    val GreyVioletSurface = Color(0x1A7E7F9A) // 10%
+    val GreyVioletBorder = Color(0x4D7E7F9A)  // 30%
 }

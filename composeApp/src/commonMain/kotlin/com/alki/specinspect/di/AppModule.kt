@@ -1,15 +1,14 @@
 package com.alki.specinspect.di
 
+import com.alki.specinspect.data.repository.ReviewRepository
+import com.alki.specinspect.data.repository.SpecificationRepository
 import org.koin.dsl.module
 
 /**
- * Основной Koin модуль приложения
- * Репозитории используют expect/actual паттерн:
- * - commonMain содержит expect декларации
- * - mobileMain содержит actual реализации с Firebase
- * - wasmJsMain содержит реализации с localStorage
+ * Основной Koin модуль приложения.
+ * SpecInspect использует in-memory репозитории — состояние теряется при выходе.
  */
 val appModule = module {
-    // Repositories (actual реализации подставляются через expect/actual механизм)
-//    single { SomeRepository }
+    single { SpecificationRepository() }
+    single { ReviewRepository() }
 }

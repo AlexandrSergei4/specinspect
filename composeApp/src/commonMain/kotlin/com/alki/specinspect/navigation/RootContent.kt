@@ -3,45 +3,39 @@ package com.alki.specinspect.navigation
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import coil3.ImageLoader
-import coil3.PlatformContext
-import coil3.annotation.ExperimentalCoilApi
-import coil3.compose.setSingletonImageLoaderFactory
-import coil3.network.ktor3.KtorNetworkFetcherFactory
-import com.alki.specinspect.features.splash.SplashScreen
+import com.alki.specinspect.features.addspec.AddSpecScreen
+import com.alki.specinspect.features.myspecs.MySpecsScreen
+import com.alki.specinspect.features.onboarding.OnboardingScreen
+import com.alki.specinspect.features.requirement.RequirementDetailScreen
+import com.alki.specinspect.features.review.ScenarioReviewScreen
+import com.alki.specinspect.features.spec.SpecDetailScreen
+import com.alki.specinspect.features.subspec.SubspecDetailScreen
 import com.alki.specinspect.ui.theme.SampleTheme
 import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.arkivanov.decompose.extensions.compose.stack.animation.fade
 import com.arkivanov.decompose.extensions.compose.stack.animation.plus
-import com.arkivanov.decompose.extensions.compose.stack.animation.scale
+import com.arkivanov.decompose.extensions.compose.stack.animation.slide
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 
-/**
- * Корневой Composable для отображения всех экранов
- */
-@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun RootContent(
     component: RootComponent,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-    // Настройка Coil ImageLoader с Ktor для корректной загрузки изображений на всех платформах
-    setSingletonImageLoaderFactory { context: PlatformContext ->
-        ImageLoader.Builder(context)
-            .components {
-                add(KtorNetworkFetcherFactory())
-            }
-            .build()
-    }
-
     SampleTheme {
         Children(
             stack = component.childStack,
             modifier = modifier.fillMaxSize(),
-            animation = stackAnimation(fade() + scale())
+            animation = stackAnimation(fade() + slide()),
         ) { child ->
             when (val instance = child.instance) {
-                is RootComponent.Child.Splash -> SplashScreen(instance.component)
+                is RootComponent.Child.Onboarding -> OnboardingScreen(instance.component)
+                is RootComponent.Child.MySpecs -> MySpecsScreen(instance.component)
+                is RootComponent.Child.SpecDetail -> SpecDetailScreen(instance.component)
+                is RootComponent.Child.SubspecDetail -> SubspecDetailScreen(instance.component)
+                is RootComponent.Child.RequirementDetail -> RequirementDetailScreen(instance.component)
+                is RootComponent.Child.Review -> ScenarioReviewScreen(instance.component)
+                is RootComponent.Child.AddSpec -> AddSpecScreen(instance.component)
             }
         }
     }

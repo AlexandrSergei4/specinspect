@@ -1,6 +1,5 @@
 //import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -30,17 +29,6 @@ kotlin {
             baseName = "ComposeApp"
             isStatic = true
         }
-    }
-
-    // WASM таргет для веб-приложения
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        browser {
-            commonWebpackConfig {
-                outputFileName = "kmpapp.js"
-            }
-        }
-        binaries.executable()
     }
 
 //    jvm()
@@ -87,13 +75,6 @@ kotlin {
         }
         val iosSimulatorArm64Main by getting {
             dependsOn(iosMain)
-        }
-        // WASM source set (альтернативные реализации репозиториев без Firebase)
-        val wasmJsMain by getting {
-            dependencies {
-                // Ktor JS клиент для Coil (загрузка изображений) и HTTP запросов
-                implementation(libs.ktor.client.js)
-            }
         }
         commonMain.dependencies {
             implementation(compose.runtime)
