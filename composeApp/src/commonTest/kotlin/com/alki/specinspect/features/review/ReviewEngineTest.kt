@@ -49,12 +49,13 @@ class ReviewEngineTest {
     )
 
     @Test
-    fun parserGroupsScenariosUnderOneRequirementCard() {
+    fun parserBuildsSubspecHierarchyForOpenSpec() {
         val library = parser.parseLibrary(rawLibrary)
 
+        assertEquals(1, library.specifications.size)
+        assertEquals(2, library.specifications.first().subspecs.size)
         assertEquals(3, library.allCards.size)
         assertEquals("Dashboard home", library.allCards.first().requirementTitle)
-        assertEquals(1, library.allCards.first().scenarios.size)
     }
 
     @Test
@@ -85,18 +86,50 @@ class ReviewEngineTest {
     }
 
     @Test
-    fun statsSortsSpecificationsByHighestMismatch() {
+    fun hierarchyStatsAggregatesPerSubspec() {
         val library = parser.parseLibrary(rawLibrary)
         val history = listOf(
             SwipeHistoryEntry(library.allCards[0].cardId, ReviewDecision.Rejected, 1, "a"),
-            SwipeHistoryEntry(library.allCards[1].cardId, ReviewDecision.Rejected, 2, "a"),
-            SwipeHistoryEntry(library.allCards[2].cardId, ReviewDecision.Approved, 3, "a")
+            SwipeHistoryEntry(library.allCards[1].cardId, ReviewDecision.Approved, 2, "a")
         )
 
-        val stats = ReviewEngine.stats(library, history)
+        val hierarchy = ReviewEngine.hierarchyStats(library, history)
+        val specification = hierarchy.first()
+        val dashboard = specification.subspecs.first { it.displayName == "Dashboard" }
+        val events = specification.subspecs.first { it.displayName == "Events Feed" }
 
-        assertEquals(3, stats.totalCards)
-        assertEquals("Dashboard", stats.specificationStats.first().displayName)
-        assertEquals(1f, stats.specificationStats.first().rejectionRate)
+        assertEquals(3, specification.stats.totalScenarios)
+        assertEquals(1, dashboard.stats.correctScenarios)
+        assertEquals(1, dashboard.stats.incorrectScenarios)
+        assertEquals(1, events.stats.unreviewedScenarios)
+    }
+
+    @Test
+    fun unreviewedQueueRespectsScopeAndDecisions() {
+        val library = parser.parseLibrary(rawLibrary)
+        val specId = library.specifications.first().specId
+        val subspecId = library.specifications.first().subspecs.first().subspecId
+        val requirementId = library.specifications.first().subspecs.first().requirements.first().requirementId
+        val firstScenario = library.specifications.first().subspecs.first().requirements.first().scenarios.first()
+
+        val queueForSpec = ReviewEngine.unreviewedScenarioQueue(
+            library = library,
+            scope = ScenarioScope.Specification(specId),
+            scenarioDecisions = mapOf(firstScenario.scenarioId to ReviewDecision.Approved)
+        )
+        val queueForSubspec = ReviewEngine.unreviewedScenarioQueue(
+            library = library,
+            scope = ScenarioScope.Subspec(specId, subspecId),
+            scenarioDecisions = emptyMap()
+        )
+        val queueForRequirement = ReviewEngine.unreviewedScenarioQueue(
+            library = library,
+            scope = ScenarioScope.Requirement(specId, subspecId, requirementId),
+            scenarioDecisions = emptyMap()
+        )
+
+        assertEquals(2, queueForSpec.size)
+        assertTrue(queueForSubspec.isNotEmpty())
+        assertEquals(1, queueForRequirement.size)
     }
 }

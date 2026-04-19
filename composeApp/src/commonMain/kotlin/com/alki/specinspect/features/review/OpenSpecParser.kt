@@ -5,8 +5,22 @@ import kotlin.time.Clock
 class OpenSpecParser {
 
     fun parseLibrary(rawLibrary: RawImportedLibrary): ImportedSpecLibrary {
-        val specifications = rawLibrary.specifications.mapNotNull { rawSpec ->
-            parseSpecification(rawSpec)
+        val specId = stableId(rawLibrary.sourceName)
+        val subspecs = rawLibrary.specifications.mapNotNull { rawSubspec ->
+            parseSubspec(specId = specId, specificationName = rawLibrary.sourceName, rawSubspec = rawSubspec)
+        }
+
+        val specifications = if (subspecs.isEmpty()) {
+            emptyList()
+        } else {
+            listOf(
+                ImportedSpecification(
+                    specId = specId,
+                    folderName = rawLibrary.sourceName.toFolderName(),
+                    displayName = rawLibrary.sourceName,
+                    subspecs = subspecs
+                )
+            )
         }
 
         return ImportedSpecLibrary(
@@ -17,23 +31,39 @@ class OpenSpecParser {
         )
     }
 
-    private fun parseSpecification(rawSpec: RawImportedSpecification): ImportedSpecification? {
-        val requirements = parseRequirements(rawSpec.folderName, rawSpec.markdown)
+    private fun parseSubspec(
+        specId: String,
+        specificationName: String,
+        rawSubspec: RawImportedSpecification
+    ): ImportedSubspec? {
+        val requirements = parseRequirements(
+            specId = specId,
+            specificationName = specificationName,
+            subspecFolderName = rawSubspec.folderName,
+            markdown = rawSubspec.markdown
+        )
         if (requirements.isEmpty()) return null
 
-        val specId = stableId(rawSpec.folderName)
-        return ImportedSpecification(
+        return ImportedSubspec(
+            subspecId = stableId("$specId|${rawSubspec.folderName}"),
             specId = specId,
-            folderName = rawSpec.folderName,
-            displayName = rawSpec.folderName.toDisplayName(),
-            requirements = requirements.map { it.copy(specId = specId) }
+            folderName = rawSubspec.folderName,
+            displayName = rawSubspec.folderName.toDisplayName(),
+            requirements = requirements
         )
     }
 
-    private fun parseRequirements(folderName: String, markdown: String): List<RequirementCard> {
+    private fun parseRequirements(
+        specId: String,
+        specificationName: String,
+        subspecFolderName: String,
+        markdown: String
+    ): List<ImportedRequirement> {
         val lines = markdown.lines()
-        val requirements = mutableListOf<RequirementCard>()
+        val requirements = mutableListOf<ImportedRequirement>()
         var index = 0
+        val subspecId = stableId("$specId|$subspecFolderName")
+        val subspecName = subspecFolderName.toDisplayName()
 
         while (index < lines.size) {
             val line = lines[index].trim()
@@ -46,7 +76,7 @@ class OpenSpecParser {
             index++
 
             val descriptionLines = mutableListOf<String>()
-            val scenarios = mutableListOf<RequirementScenario>()
+            val scenarios = mutableListOf<ImportedScenario>()
 
             while (index < lines.size) {
                 val current = lines[index].trim()
@@ -75,7 +105,12 @@ class OpenSpecParser {
                         }
 
                         if (whenText.isNotBlank() || thenText.isNotBlank()) {
-                            scenarios += RequirementScenario(
+                            val requirementId = stableId("$specId|$subspecFolderName|$requirementTitle")
+                            scenarios += ImportedScenario(
+                                scenarioId = stableId(
+                                    "$requirementId|$scenarioTitle|$whenText|$thenText"
+                                ),
+                                requirementId = requirementId,
                                 title = scenarioTitle,
                                 whenText = whenText,
                                 thenText = thenText
@@ -88,12 +123,17 @@ class OpenSpecParser {
                 index++
             }
 
-            if (requirementTitle.isNotBlank() && scenarios.isNotEmpty()) {
-                val description = descriptionLines.joinToString("\n").ifBlank {
-                    "No additional requirement description provided."
-                }
-                val fingerprint = buildString {
-                    append(folderName)
+            if (requirementTitle.isBlank() || scenarios.isEmpty()) {
+                continue
+            }
+
+            val description = descriptionLines.joinToString("\n").ifBlank {
+                "No additional requirement description provided."
+            }
+            val requirementId = stableId("$specId|$subspecFolderName|$requirementTitle|$description")
+            val cardId = stableId(
+                buildString {
+                    append(subspecFolderName)
                     append('|')
                     append(requirementTitle)
                     append('|')
@@ -108,16 +148,18 @@ class OpenSpecParser {
                         append('|')
                     }
                 }
-
-                requirements += RequirementCard(
-                    cardId = stableId(fingerprint),
-                    specId = "",
-                    specificationName = folderName.toDisplayName(),
-                    requirementTitle = requirementTitle,
-                    requirementDescription = description,
-                    scenarios = scenarios
-                )
-            }
+            )
+            requirements += ImportedRequirement(
+                requirementId = requirementId,
+                cardId = cardId,
+                specId = specId,
+                subspecId = subspecId,
+                specificationName = specificationName,
+                subspecName = subspecName,
+                requirementTitle = requirementTitle,
+                requirementDescription = description,
+                scenarios = scenarios.map { it.copy(requirementId = requirementId) }
+            )
         }
 
         return requirements
@@ -135,3 +177,9 @@ private fun String.toDisplayName(): String =
         .joinToString(" ") { token ->
             token.replaceFirstChar { char -> char.uppercase() }
         }
+
+private fun String.toFolderName(): String =
+    trim()
+        .lowercase()
+        .replace(Regex("[^a-z0-9]+"), "-")
+        .trim('-')

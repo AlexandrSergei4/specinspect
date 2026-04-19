@@ -92,34 +92,39 @@ The system SHALL support like/interest, skip, and compatibility-detail actions o
 
 Экраны из которых состоит приложение:
 1. Экран онбординга
-1.1 Дзиайн экрана https://www.figma.com/design/0bCHsLEe7HLPIeOKoOSvfx/design?node-id=16-50&t=c8bGhbN7OXzdRUWF-0
+1.1 Дзиайн экрана @Figma https://www.figma.com/design/0bCHsLEe7HLPIeOKoOSvfx/design?node-id=16-50&t=c8bGhbN7OXzdRUWF-0
 1.2 Описание экрана
 Экран онбординка кратко описывает функциональность приложения, и позволяет перейти к демонстрации работы на демонстрационной спеке, либо перейти к экрану мои спецификации, для начала полноценной работы.
 
 2. Экран Мои спецификации
-2.1 Дизайн экрана https://www.figma.com/design/0bCHsLEe7HLPIeOKoOSvfx/design?node-id=12-282&t=c8bGhbN7OXzdRUWF-0
+2.1 Дизайн экрана @Figma https://www.figma.com/design/0bCHsLEe7HLPIeOKoOSvfx/design?node-id=12-282&t=c8bGhbN7OXzdRUWF-0
 2.2 Описание экрана
 Экран мои спецификации показывает список доступных спецификаций, включая демонстрационную спецификацию. Пользователь может удалить спецификацию, и добавить новую спецификацию. Примечание: при удалении демо-спецификации, она просто удаляется с экрана, не удаляя саму демо-спецификацию. Сама демо-спецификация должна оставаться доступной на экране онбординга.
 
 3. Экран просмотра спецификации
-3.1 Дизайн экрана https://www.figma.com/design/0bCHsLEe7HLPIeOKoOSvfx/design?node-id=12-334&t=c8bGhbN7OXzdRUWF-0
+3.1 Дизайн экрана @Figma https://www.figma.com/design/0bCHsLEe7HLPIeOKoOSvfx/design?node-id=12-334&t=c8bGhbN7OXzdRUWF-0
 3.2 Описание экрана
 Экран спецификации показывает краткую статистику всех subspec спецификации, и список карточек subspec спецификации. Статистика спецификации показывает секции с числом, сколько subspec корректных, некорректных, и неоцененных. Кнопка Начать ревью позволяет перейти к экрану ревью всех Scenario этой cпецификации. При клике на секцию статистики, лист subspec отфильтровывается соответствуя выбранной секции статистики. Лист карточек subspec отображает subspec спецификации, каждая карточка subspec отображает название subspec, количество Requirement, Scenario и карткую статистику по subspec - сколько корректных, неккоректных и неоцененных Requirement.
 При клике на карточку subspec, пользователь навигируется на экран просмотра subspec.
 
 4. Экран просмотра subspec
-4.1 Дизайн экрана https://www.figma.com/design/0bCHsLEe7HLPIeOKoOSvfx/design?node-id=12-416&t=c8bGhbN7OXzdRUWF-0
+4.1 Дизайн экрана @Figma https://www.figma.com/design/0bCHsLEe7HLPIeOKoOSvfx/design?node-id=12-416&t=c8bGhbN7OXzdRUWF-0
 4.2 Описание экрана
 Экран subspec показывает краткую статистику всех Requirement subspec, и список карточек Requirement subspec. Статистика subspec показывает секции с числом, сколько Requirement корректных, некорректных, и неоцененных. Кнопка Начать ревью позволяет перейти к экрану ревью всех Scenario этого subspec. При клике на секцию статистики, лист Requirement отфильтровывается соответствуя выбранной секции статистики. Лист карточек Requirement отображает Requirement спецификации, каждая карточка Requirement отображает название Requirement, количество Scenario и карткую статистику по Requirement - сколько корректных, неккоректных и неоцененных Scenario.
 При клике на карточку Requirement, пользователь навигируется на экран просмотра Requirement.
 
-4. Экран просмотра Requirement
-4.1 Дизайн экрана https://www.figma.com/design/0bCHsLEe7HLPIeOKoOSvfx/design?node-id=12-630&t=c8bGhbN7OXzdRUWF-0
-4.2 Описание экрана
+5. Экран просмотра Requirement
+5.1 Дизайн экрана @Figma https://www.figma.com/design/0bCHsLEe7HLPIeOKoOSvfx/design?node-id=12-630&t=c8bGhbN7OXzdRUWF-0
+5.2 Описание экрана
 Экран Requirement показывает краткую статистику всех Scenario Requirement, и список карточек Scenario Requirement. Статистика Requirement показывает секции с числом, сколько Scenario корректных, некорректных, и неоцененных. Кнопка Начать ревью позволяет перейти к экрану ревью всех Scenario этого Requirement. При клике на секцию статистики, лист Scenario отфильтровывается соответствуя выбранной секции статистики. Лист карточек Scenario отображает WHEN и THEN. Внизу карточки есть переключатель, позволяющий пользователю выбрать корректный это Scenario или некорректный.
 
 
-4. Экран ревью Scenario
-4.1 Дизайн экрана https://www.figma.com/design/0bCHsLEe7HLPIeOKoOSvfx/design?node-id=20-150&t=c8bGhbN7OXzdRUWF-0
-4.2 Описание экрана
+6. Экран ревью Scenario
+6.1 Дизайн экрана @Figma https://www.figma.com/design/0bCHsLEe7HLPIeOKoOSvfx/design?node-id=20-150&t=c8bGhbN7OXzdRUWF-0
+6.2 Описание экрана
 Экран ревью Scenario позволяет в Tinder манере оценить рандомный непросмотренный Scenario выбранной сущности(spec, subspec, requirement). При свайпе влево, происходит анимация смахивания карточки и Scenario помечается как некорректный. При свайпе вправо, происходит анимация смахивания карточки и Scenario помечается как корректный. Пользователь  может вернуться на экран сущности, с которой он переходил на ревью, через навигацию назад. После просмотра всез непросмотренных Scenario, пользователь навигируется назад на сушность с которой был запущено ревью.
+
+7. Экран добавления спецификации
+7.1 Дизайн экрана @Figma https://www.figma.com/design/0bCHsLEe7HLPIeOKoOSvfx/design?node-id=20-104&t=KJgPPehDpilKTb4m-0
+7.2 Описание экрана
+Экран добавления спецификации позволяет добавть новую спецификацю для отображения на экране спецификаций. Для этого пользователь должен задать ее имя, и выбрать папку с папкой specs

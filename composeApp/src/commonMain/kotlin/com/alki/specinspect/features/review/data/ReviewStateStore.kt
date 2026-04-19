@@ -29,8 +29,10 @@ class ReviewStateStore(
         rawLibrary: RawImportedLibrary
     ): PersistedReviewState {
         val parsed = parser.parseLibrary(rawLibrary)
+        val updatedLibraries = currentState.libraries + parsed
         return currentState.copy(
             activeLibrary = parsed,
+            libraries = updatedLibraries,
             currentMode = ReviewMode.Unreviewed
         )
     }
@@ -47,6 +49,23 @@ class ReviewStateStore(
             reviewedAtEpochMillis = Clock.System.now().toEpochMilliseconds(),
             reviewSessionId = reviewSessionId
         )
-        return state.copy(swipeHistory = updated)
+        val relatedScenarioIds = state.activeLibrary
+            ?.allCards
+            ?.firstOrNull { it.cardId == cardId }
+            ?.scenarios
+            .orEmpty()
+            .map { it.scenarioId }
+
+        val updatedScenarioDecisions = buildMap {
+            putAll(state.scenarioDecisions)
+            relatedScenarioIds.forEach { scenarioId ->
+                put(scenarioId, decision)
+            }
+        }
+
+        return state.copy(
+            swipeHistory = updated,
+            scenarioDecisions = updatedScenarioDecisions
+        )
     }
 }

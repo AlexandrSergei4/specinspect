@@ -1,4 +1,4 @@
-//import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
@@ -16,6 +16,8 @@ plugins {
 }
 
 kotlin {
+    jvm("desktop")
+
     androidTarget {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_17)
@@ -42,8 +44,6 @@ kotlin {
         }
         binaries.executable()
     }
-
-//    jvm()
 
     sourceSets {
         // Промежуточный source set для мобильных платформ (Android + iOS)
@@ -95,6 +95,13 @@ kotlin {
                 implementation(libs.ktor.client.js)
             }
         }
+        val desktopMain by getting {
+            dependencies {
+                implementation(compose.desktop.currentOs)
+                implementation(libs.kotlinx.coroutines.swing)
+                implementation(libs.ktor.client.okhttp)
+            }
+        }
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
@@ -128,10 +135,6 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
-//        jvmMain.dependencies {
-//            implementation(compose.desktop.currentOs)
-//            implementation(libs.kotlinx.coroutines.swing)
-//        }
     }
 }
 
@@ -175,14 +178,14 @@ dependencies {
 //    schemaDirectory("$projectDir/schemas")
 //}
 
-//compose.desktop {
-//    application {
-//        mainClass = "com.alki.specinspect.MainKt"
-//
-//        nativeDistributions {
-//            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-//            packageName = "com.alki.specinspect"
-//            packageVersion = "1.0.0"
-//        }
-//    }
-//}
+compose.desktop {
+    application {
+        mainClass = "com.alki.specinspect.MainKt"
+
+        nativeDistributions {
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            packageName = "com.alki.specinspect"
+            packageVersion = "1.0.0"
+        }
+    }
+}
