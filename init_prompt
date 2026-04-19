@@ -81,7 +81,15 @@ The system SHALL support like/interest, skip, and compatibility-detail actions o
 - **WHEN** the user performs like/interest on a card
 - **THEN** the system records the reaction and advances the feed to the next candidate
 
- 
+Палитра:
+
+#272838 - темный (основной фон кнопок, текст)
+#f3de8a - желтый (акценты, секция THEN)
+#eb9486 - коралловый (некорректные карточки, кнопка "влево")
+#7e7f9a - серо-фиолетовый (вторичный текст, границы)
+#f9f8f8 - светлый фон (основной фон приложения)
+#77a0a9 - сине-зеленый (корректные карточки, кнопка "вправо", секция WHEN)
+
 Экраны из которых состоит приложение:
 1. Экран онбординга
 1.1 Дзиайн экрана https://www.figma.com/design/0bCHsLEe7HLPIeOKoOSvfx/design?node-id=16-50&t=c8bGhbN7OXzdRUWF-0

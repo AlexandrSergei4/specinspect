@@ -29,7 +29,7 @@ fun SampleButtonComponent(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    color: Color = SampleColors.ChristmasRed
+    color: Color = SampleColors.Clay
 ) {
     Button(
         onClick = onClick,
@@ -38,9 +38,9 @@ fun SampleButtonComponent(
         shape = RoundedCornerShape(16.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = color,
-            contentColor = SampleColors.SnowWhite,
-            disabledContainerColor = SampleColors.DisabledButton,
-            disabledContentColor = SampleColors.OnSurfaceVariant
+            contentColor = SampleColors.Paper,
+            disabledContainerColor = SampleColors.Border,
+            disabledContentColor = SampleColors.InkSoft
         ),
         contentPadding = PaddingValues(horizontal = 24.dp, vertical = 16.dp)
     ) {
@@ -67,7 +67,7 @@ fun SampleSecondaryButton(
         enabled = enabled,
         shape = RoundedCornerShape(16.dp),
         colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = SampleColors.ChristmasRed
+            contentColor = SampleColors.Clay
         ),
         contentPadding = PaddingValues(horizontal = 24.dp, vertical = 16.dp)
     ) {
@@ -96,7 +96,7 @@ fun SampleTextButton(
         Text(
             text = text,
             style = MaterialTheme.typography.labelLarge,
-            color = if (enabled) SampleColors.ChristmasRed else SampleColors.OnSurfaceVariant
+            color = if (enabled) SampleColors.Clay else SampleColors.InkSoft
         )
     }
 }
@@ -117,7 +117,7 @@ private fun SampleButtonPreview() {
             text = "Зеленая кнопка",
             onClick = {},
             modifier = Modifier.fillMaxWidth(),
-            color = SampleColors.ChristmasGreen
+            color = SampleColors.Moss
         )
         Spacer(modifier = Modifier.height(12.dp))
         SampleButtonComponent(

@@ -14,113 +14,96 @@ import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.Font
 import specinspect.composeapp.generated.resources.Res
 import specinspect.composeapp.generated.resources.advent_font
+import specinspect.composeapp.generated.resources.neucha_regular
+import specinspect.composeapp.generated.resources.winky_sans
 
-/**
- * Цветовая схема SampleTheme
- * Smart Minimalism + New Year + Cartoon
- */
 private val SampleColorScheme = lightColorScheme(
-    primary = SampleColors.ChristmasRed,
-    onPrimary = SampleColors.SnowWhite,
-    primaryContainer = SampleColors.SoftRed,
-    onPrimaryContainer = SampleColors.ChristmasRed,
-
-    secondary = SampleColors.ChristmasGreen,
-    onSecondary = SampleColors.SnowWhite,
-    secondaryContainer = SampleColors.SoftGreen,
-    onSecondaryContainer = SampleColors.ChristmasGreen,
-
-    tertiary = SampleColors.ChristmasGold,
-    onTertiary = SampleColors.OnBackground,
-    tertiaryContainer = SampleColors.SoftGold,
-    onTertiaryContainer = SampleColors.OnBackground,
-
-    background = SampleColors.Background,
-    onBackground = SampleColors.OnBackground,
-
-    surface = SampleColors.Surface,
-    onSurface = SampleColors.OnSurface,
-    surfaceVariant = SampleColors.SurfaceVariant,
-    onSurfaceVariant = SampleColors.OnSurfaceVariant,
-
-    error = SampleColors.Error,
-    onError = SampleColors.SnowWhite,
-
-    outline = SampleColors.CardBorder,
-    outlineVariant = SampleColors.CardBorder
+    primary = SampleColors.Moss,
+    onPrimary = SampleColors.Paper,
+    primaryContainer = SampleColors.Butter,
+    onPrimaryContainer = SampleColors.Ink,
+    secondary = SampleColors.Clay,
+    onSecondary = SampleColors.Paper,
+    secondaryContainer = SampleColors.DustyRose,
+    onSecondaryContainer = SampleColors.Ink,
+    tertiary = SampleColors.Butter,
+    onTertiary = SampleColors.Ink,
+    tertiaryContainer = SampleColors.Fog,
+    onTertiaryContainer = SampleColors.Ink,
+    background = SampleColors.Mist,
+    onBackground = SampleColors.Ink,
+    surface = SampleColors.Paper,
+    onSurface = SampleColors.Ink,
+    surfaceVariant = SampleColors.Fog,
+    onSurfaceVariant = SampleColors.InkSoft,
+    error = SampleColors.Negative,
+    onError = SampleColors.Paper,
+    outline = SampleColors.Border,
+    outlineVariant = SampleColors.Border
 )
 
 @Composable
 fun getMyFontFamily(): FontFamily {
-    val regular = Font(Res.font.advent_font, FontWeight.Normal)
-    val bold = Font(Res.font.advent_font, FontWeight.Bold)
-
-    return FontFamily(regular, bold)
+    val display = Font(Res.font.winky_sans, FontWeight.Normal)
+    val body = Font(Res.font.neucha_regular, FontWeight.Normal)
+    val accent = Font(Res.font.advent_font, FontWeight.Bold)
+    return FontFamily(display, body, accent)
 }
-/**
- * Типографика SampleTypography
- * Шрифт: Winky Sans (используем системный sans-serif как fallback)
- * Стиль: мультяшный, дружелюбный
- */
+
 private fun SampleTypography(fontFamily: FontFamily) = Typography(
-    // Большие заголовки
     displayLarge = TextStyle(
-        fontFamily = fontFamily, // Winky Sans fallback
+        fontFamily = fontFamily,
         fontWeight = FontWeight.Bold,
-        fontSize = 57.sp,
-        lineHeight = 64.sp,
-        letterSpacing = (-0.25).sp
+        fontSize = 52.sp,
+        lineHeight = 58.sp,
+        letterSpacing = (-0.4).sp
     ),
     displayMedium = TextStyle(
         fontFamily = fontFamily,
         fontWeight = FontWeight.Bold,
-        fontSize = 45.sp,
-        lineHeight = 52.sp,
+        fontSize = 42.sp,
+        lineHeight = 46.sp,
         letterSpacing = 0.sp
     ),
     displaySmall = TextStyle(
         fontFamily = fontFamily,
         fontWeight = FontWeight.Bold,
-        fontSize = 36.sp,
-        lineHeight = 44.sp,
-        letterSpacing = 0.sp
+        fontSize = 34.sp,
+        lineHeight = 40.sp,
+        letterSpacing = (-0.2).sp
     ),
-
-    // Заголовки
     headlineLarge = TextStyle(
         fontFamily = fontFamily,
         fontWeight = FontWeight.Bold,
-        fontSize = 32.sp,
-        lineHeight = 40.sp,
-        letterSpacing = 0.sp
+        fontSize = 30.sp,
+        lineHeight = 36.sp,
+        letterSpacing = (-0.1).sp
     ),
     headlineMedium = TextStyle(
         fontFamily = fontFamily,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 28.sp,
-        lineHeight = 36.sp,
-        letterSpacing = 0.sp
-    ),
-    headlineSmall = TextStyle(
-        fontFamily = fontFamily,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 24.sp,
+        fontSize = 26.sp,
         lineHeight = 32.sp,
         letterSpacing = 0.sp
     ),
-
-    // Названия
-    titleLarge = TextStyle(
+    headlineSmall = TextStyle(
         fontFamily = fontFamily,
         fontWeight = FontWeight.SemiBold,
         fontSize = 22.sp,
         lineHeight = 28.sp,
         letterSpacing = 0.sp
     ),
+    titleLarge = TextStyle(
+        fontFamily = fontFamily,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 21.sp,
+        lineHeight = 26.sp,
+        letterSpacing = 0.1.sp
+    ),
     titleMedium = TextStyle(
         fontFamily = fontFamily,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 18.sp,
+        fontSize = 17.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.15.sp
     ),
@@ -131,69 +114,58 @@ private fun SampleTypography(fontFamily: FontFamily) = Typography(
         lineHeight = 20.sp,
         letterSpacing = 0.1.sp
     ),
-
-    // Основной текст
     bodyLarge = TextStyle(
         fontFamily = fontFamily,
         fontWeight = FontWeight.Normal,
-        fontSize = 20.sp,
+        fontSize = 18.sp,
         lineHeight = 24.sp,
-        letterSpacing = 0.5.sp
+        letterSpacing = 0.2.sp
     ),
     bodyMedium = TextStyle(
         fontFamily = fontFamily,
         fontWeight = FontWeight.Normal,
-        fontSize = 18.sp,
-        lineHeight = 20.sp,
+        fontSize = 16.sp,
+        lineHeight = 22.sp,
         letterSpacing = 0.25.sp
     ),
     bodySmall = TextStyle(
-        fontFamily = FontFamily.SansSerif,
+        fontFamily = fontFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
-        lineHeight = 16.sp,
-        letterSpacing = 0.4.sp
+        lineHeight = 20.sp,
+        letterSpacing = 0.15.sp
     ),
-
-    // Подписи
     labelLarge = TextStyle(
         fontFamily = fontFamily,
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
         lineHeight = 20.sp,
-        letterSpacing = 0.1.sp
+        letterSpacing = 0.2.sp
     ),
     labelMedium = TextStyle(
-        fontFamily = FontFamily.SansSerif,
+        fontFamily = fontFamily,
         fontWeight = FontWeight.Medium,
-        fontSize = 14.sp,
+        fontSize = 13.sp,
         lineHeight = 16.sp,
-        letterSpacing = 0.5.sp
+        letterSpacing = 0.2.sp
     ),
     labelSmall = TextStyle(
         fontFamily = fontFamily,
         fontWeight = FontWeight.Medium,
         fontSize = 12.sp,
         lineHeight = 16.sp,
-        letterSpacing = 0.5.sp
+        letterSpacing = 0.2.sp
     )
 )
 
-/**
- * Формы SampleThemeShapes
- * Мультяшный стиль с скругленными углами
- */
 private val SampleThemeShapes = Shapes(
-    extraSmall = RoundedCornerShape(8.dp),
-    small = RoundedCornerShape(12.dp),
-    medium = RoundedCornerShape(16.dp),
-    large = RoundedCornerShape(24.dp),
-    extraLarge = RoundedCornerShape(32.dp)
+    extraSmall = RoundedCornerShape(10.dp),
+    small = RoundedCornerShape(16.dp),
+    medium = RoundedCornerShape(24.dp),
+    large = RoundedCornerShape(30.dp),
+    extraLarge = RoundedCornerShape(38.dp)
 )
 
-/**
- * Тема SampleTheme
- */
 @Composable
 fun SampleTheme(
     content: @Composable () -> Unit
