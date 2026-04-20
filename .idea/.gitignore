@@ -1,3 +1,20 @@
 # Default ignored files
 /shelf/
 /workspace.xml
+/artifacts/composeApp_desktop.xml
+/artifacts/composeApp_wasm_js.xml
+/caches/deviceStreaming.xml
+/.name
+/AndroidProjectSystem.xml
+/assetWizardSettings.xml
+/compiler.xml
+/deploymentTargetSelector.xml
+/gradle.xml
+/markdown.xml
+/migrations.xml
+/misc.xml
+/modules.xml
+/runConfigurations.xml
+/salalads.iosApp.iml
+/vcs.xml
+/xcode.xml
