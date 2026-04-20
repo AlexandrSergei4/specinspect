@@ -4,6 +4,7 @@ import com.alki.specinspect.data.models.ReviewStatus
 import com.alki.specinspect.data.models.Scenario
 import com.alki.specinspect.data.repository.ReviewRepository
 import com.alki.specinspect.data.repository.SpecificationRepository
+import com.alki.specinspect.util.UrlOpener
 import com.arkivanov.decompose.ComponentContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,6 +31,7 @@ interface ScenarioReviewComponent {
     fun onBack()
     fun onSwipe(status: ReviewStatus)
     fun onUndo()
+    fun onOpenSource(url: String)
 }
 
 data class ReviewCardState(
@@ -40,6 +42,9 @@ data class ReviewCardState(
     val whenText: String,
     val thenText: String,
     val requirementText: String,
+    val sourcePath: String? = null,
+    val sourceLine: Int? = null,
+    val sourceUrl: String? = null,
 )
 
 private data class ReviewUndoEntry(
@@ -54,6 +59,7 @@ private data class ReviewSource(
     val subspecId: String,
     val requirementId: String,
     val requirementText: String,
+    val sourceUrl: String? = null,
 )
 
 data class ScenarioReviewState(
@@ -97,6 +103,7 @@ class DefaultScenarioReviewComponent(
                                 subspecId = sub.id,
                                 requirementId = req.id,
                                 requirementText = req.description,
+                                sourceUrl = spec.gitHubUrlFor(it),
                             )
                         }
                     }
@@ -110,6 +117,7 @@ class DefaultScenarioReviewComponent(
                                 subspecId = scope.subspecId,
                                 requirementId = req.id,
                                 requirementText = req.description,
+                                sourceUrl = spec.gitHubUrlFor(it),
                             )
                         }
                     } ?: emptyList()
@@ -122,6 +130,7 @@ class DefaultScenarioReviewComponent(
                         subspecId = scope.subspecId,
                         requirementId = scope.requirementId,
                         requirementText = req.description,
+                        sourceUrl = spec.gitHubUrlFor(it),
                     )
                 } ?: emptyList()
             }
@@ -145,6 +154,9 @@ class DefaultScenarioReviewComponent(
                     whenText = source.scenario.whenText,
                     thenText = source.scenario.thenText,
                     requirementText = source.requirementText,
+                    sourcePath = source.scenario.source?.filePath,
+                    sourceLine = source.scenario.source?.line,
+                    sourceUrl = source.sourceUrl,
                 )
             },
             currentIndex = 0,
@@ -200,4 +212,17 @@ class DefaultScenarioReviewComponent(
         val newIndex = (s.currentIndex - 1).coerceAtLeast(0)
         _state.value = s.copy(currentIndex = newIndex, canUndo = undoStack.isNotEmpty(), finished = false)
     }
+
+    override fun onOpenSource(url: String) {
+        UrlOpener.openUrl(url)
+    }
+}
+
+private fun com.alki.specinspect.data.models.Specification.gitHubUrlFor(scenario: Scenario): String? {
+    val source = scenario.source ?: return null
+    val gitSource = gitSource ?: return null
+    if (gitSource.repository.isBlank() || gitSource.branch.isBlank() || source.filePath.isBlank() || source.line <= 0) {
+        return null
+    }
+    return "https://github.com/${gitSource.repository}/blob/${gitSource.branch}/${source.filePath}#L${source.line}"
 }

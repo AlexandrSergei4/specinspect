@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.alki.specinspect.data.models.ReviewStatus
 import com.alki.specinspect.ui.components.AppTopBar
+import com.alki.specinspect.ui.components.IconChip
 import com.alki.specinspect.ui.components.PrimaryButton
 import com.alki.specinspect.ui.components.ReviewTimestampText
 import com.alki.specinspect.ui.components.SectionHeader
@@ -44,6 +45,7 @@ import com.alki.specinspect.ui.components.WhenBlock
 import com.alki.specinspect.ui.components.WhiteCard
 import com.alki.specinspect.ui.theme.AppColors
 import compose.icons.TablerIcons
+import compose.icons.tablericons.BrandGithub
 import compose.icons.tablericons.Check
 import compose.icons.tablericons.PlayerPlay
 import compose.icons.tablericons.X
@@ -108,6 +110,7 @@ fun RequirementDetailScreen(component: RequirementDetailComponent) {
             items(state.visibleScenarios, key = { it.id }) { sc ->
                 ScenarioCard(
                     state = sc,
+                    onOpenSource = component::onOpenSource,
                     onSetStatus = { st -> component.onSetStatus(sc.id, st) },
                 )
             }
@@ -118,6 +121,7 @@ fun RequirementDetailScreen(component: RequirementDetailComponent) {
 @Composable
 private fun ScenarioCard(
     state: ScenarioCardState,
+    onOpenSource: (String) -> Unit,
     onSetStatus: (ReviewStatus) -> Unit,
 ) {
     TintedCard(
@@ -125,16 +129,33 @@ private fun ScenarioCard(
         border = AppColors.TealBorder,
         padding = PaddingValues(20.dp),
     ) {
-        Text(
-            "СЦЕНАРИЙ ${state.index}",
-            style = MaterialTheme.typography.labelSmall,
-            color = AppColors.GreyViolet,
-        )
-        Text(
-            state.title,
-            style = MaterialTheme.typography.titleMedium,
-            color = AppColors.Dark,
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Top,
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    "СЦЕНАРИЙ ${state.index}",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = AppColors.GreyViolet,
+                )
+                Text(
+                    state.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = AppColors.Dark,
+                )
+            }
+            if (state.sourceUrl != null) {
+                Spacer(Modifier.width(12.dp))
+                IconChip(
+                    icon = TablerIcons.BrandGithub,
+                    onClick = { onOpenSource(state.sourceUrl) },
+                    background = AppColors.White,
+                    iconTint = AppColors.Dark,
+                    contentDescription = "Открыть источник на GitHub",
+                )
+            }
+        }
         ReviewTimestampText(state.lastReviewedAt, modifier = Modifier.padding(top = 4.dp))
         Spacer(Modifier.height(12.dp))
         WhenBlock(state.whenText)

@@ -1,6 +1,8 @@
 package com.alki.specinspect.data.specification
 
 import com.alki.specinspect.data.importer.ImportedSpecFile
+import com.alki.specinspect.data.importer.parseGitHubRepository
+import com.alki.specinspect.data.models.GitSource
 import com.alki.specinspect.data.models.Specification
 import com.alki.specinspect.data.openspec.OpenSpecParser
 import com.alki.specinspect.data.speckit.SpecKitParser
@@ -8,7 +10,11 @@ import kotlin.random.Random
 
 object ImportedSpecificationFactory {
 
-    fun create(name: String, files: List<ImportedSpecFile>): Specification {
+    fun create(
+        name: String,
+        files: List<ImportedSpecFile>,
+        gitSource: GitSource? = null,
+    ): Specification {
         val specName = name.trim()
         if (specName.isEmpty()) error("Укажите имя спецификации")
         if (files.isEmpty()) error("По указанному пути не найдено ни одного spec.md")
@@ -25,6 +31,7 @@ object ImportedSpecificationFactory {
                     name = subspecName,
                     content = file.content,
                     idPrefix = idPrefix,
+                    filePath = file.path,
                 )
                 if (specKitSubspec.requirements.isNotEmpty()) {
                     specKitSubspec
@@ -33,6 +40,7 @@ object ImportedSpecificationFactory {
                         name = subspecName,
                         content = file.content,
                         idPrefix = idPrefix,
+                        filePath = file.path,
                     )
                     if (openSpecSubspec.requirements.isEmpty()) {
                         error(
@@ -48,6 +56,15 @@ object ImportedSpecificationFactory {
             name = specName,
             isDemo = false,
             subspecs = subspecs,
+            gitSource = gitSource,
+        )
+    }
+
+    fun gitSourceFrom(repositoryUrl: String, branch: String): GitSource {
+        val repository = parseGitHubRepository(repositoryUrl)
+        return GitSource(
+            repository = "${repository.owner}/${repository.repo}",
+            branch = branch.trim(),
         )
     }
 }

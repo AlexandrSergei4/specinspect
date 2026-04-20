@@ -64,7 +64,7 @@ fun SubspecDetailScreen(component: SubspecDetailComponent) {
             item {
                 WhiteCard {
                     Text(
-                        "Общая статистика",
+                        "Статистика требований",
                         style = MaterialTheme.typography.titleSmall,
                         color = AppColors.Dark,
                     )

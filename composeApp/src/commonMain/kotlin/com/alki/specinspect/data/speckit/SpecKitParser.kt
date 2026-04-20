@@ -2,11 +2,17 @@ package com.alki.specinspect.data.speckit
 
 import com.alki.specinspect.data.models.Requirement
 import com.alki.specinspect.data.models.Scenario
+import com.alki.specinspect.data.models.ScenarioSource
 import com.alki.specinspect.data.models.Subspec
 
 object SpecKitParser {
 
-    fun parseSubspec(name: String, content: String, idPrefix: String = name): Subspec {
+    fun parseSubspec(
+        name: String,
+        content: String,
+        idPrefix: String = name,
+        filePath: String? = null,
+    ): Subspec {
         val lines = content.lines()
         val featureTitle = lines.firstNotNullOfOrNull { line ->
             FEATURE_TITLE_HEADER.matchEntire(line.trim())?.groupValues?.get(1)?.trim()
@@ -17,13 +23,16 @@ object SpecKitParser {
         val stories = parseStories(lines)
 
         val requirements = stories.mapIndexedNotNull { index, story ->
-            val scenarios = story.acceptanceScenarios.mapIndexed { scenarioIndex, scenarioText ->
-                val parsedScenario = parseAcceptanceScenario(scenarioText)
+            val scenarios = story.acceptanceScenarios.mapIndexed { scenarioIndex, scenario ->
+                val parsedScenario = parseAcceptanceScenario(scenario.text)
                 Scenario(
                     id = "$idPrefix::${story.title.slug()}::scenario-${scenarioIndex + 1}",
                     title = "Use Case ${scenarioIndex + 1}",
                     whenText = parsedScenario.whenText,
                     thenText = parsedScenario.thenText,
+                    source = filePath
+                        ?.takeIf { it.isNotBlank() }
+                        ?.let { ScenarioSource(filePath = it, line = scenario.line) },
                 )
             }
 
@@ -68,7 +77,7 @@ object SpecKitParser {
             val bodyLines = mutableListOf<String>()
             var whyPriority = ""
             var independentTest = ""
-            val acceptanceScenarios = mutableListOf<String>()
+            val acceptanceScenarios = mutableListOf<ParsedAcceptanceScenario>()
 
             while (index < lines.size) {
                 val trimmed = lines[index].trim()
@@ -124,14 +133,21 @@ object SpecKitParser {
     }
 
     private fun collectAcceptanceScenarios(lines: List<String>, startIndex: Int): CollectedItems {
-        val items = mutableListOf<String>()
+        val items = mutableListOf<ParsedAcceptanceScenario>()
         val current = StringBuilder()
+        var currentLine = -1
         var index = startIndex
 
         fun flushCurrent() {
             val value = current.toString().trim()
-            if (value.isNotBlank()) items += value
+            if (value.isNotBlank()) {
+                items += ParsedAcceptanceScenario(
+                    text = value,
+                    line = currentLine.coerceAtLeast(1),
+                )
+            }
             current.clear()
+            currentLine = -1
         }
 
         while (index < lines.size) {
@@ -152,6 +168,7 @@ object SpecKitParser {
             when {
                 itemMatch != null -> {
                     flushCurrent()
+                    currentLine = index + 1
                     current.append(itemMatch.groupValues[1].trim())
                 }
                 trimmed.isBlank() -> {
@@ -257,7 +274,7 @@ object SpecKitParser {
         val summary: String,
         val whyPriority: String,
         val independentTest: String,
-        val acceptanceScenarios: List<String>,
+        val acceptanceScenarios: List<ParsedAcceptanceScenario>,
     )
 
     private data class ParsedScenario(
@@ -265,8 +282,13 @@ object SpecKitParser {
         val thenText: String,
     )
 
+    private data class ParsedAcceptanceScenario(
+        val text: String,
+        val line: Int,
+    )
+
     private data class CollectedItems(
-        val items: List<String>,
+        val items: List<ParsedAcceptanceScenario>,
         val nextIndex: Int,
     )
 

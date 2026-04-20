@@ -11,6 +11,18 @@ enum class ReviewStatus {
     INCORRECT
 }
 
+@Serializable
+data class ScenarioSource(
+    val filePath: String,
+    val line: Int,
+)
+
+@Serializable
+data class GitSource(
+    val repository: String,
+    val branch: String,
+)
+
 /**
  * Сценарий внутри Requirement
  */
@@ -20,6 +32,7 @@ data class Scenario(
     val title: String,
     val whenText: String,
     val thenText: String,
+    val source: ScenarioSource? = null,
 )
 
 /**
@@ -52,6 +65,7 @@ data class Specification(
     val name: String,
     val isDemo: Boolean,
     val subspecs: List<Subspec>,
+    val gitSource: GitSource? = null,
 )
 
 /**

@@ -2,6 +2,7 @@ package com.alki.specinspect.data.openspec
 
 import com.alki.specinspect.data.models.Requirement
 import com.alki.specinspect.data.models.Scenario
+import com.alki.specinspect.data.models.ScenarioSource
 import com.alki.specinspect.data.models.Subspec
 
 /**
@@ -23,7 +24,12 @@ object OpenSpecParser {
     /**
      * Парсит содержимое одного spec.md в Subspec
      */
-    fun parseSubspec(name: String, content: String, idPrefix: String = name): Subspec {
+    fun parseSubspec(
+        name: String,
+        content: String,
+        idPrefix: String = name,
+        filePath: String? = null,
+    ): Subspec {
         val lines = content.lines()
         val requirements = mutableListOf<Requirement>()
 
@@ -51,6 +57,7 @@ object OpenSpecParser {
                     val scHead = SCENARIO_HEADER.matchEntire(l.trim())
                     if (scHead != null) {
                         val scTitle = scHead.groupValues[1].trim()
+                        val scenarioLine = i + 1
                         i++
                         var whenText = ""
                         var thenText = ""
@@ -73,6 +80,9 @@ object OpenSpecParser {
                                 title = scTitle,
                                 whenText = whenText,
                                 thenText = thenText,
+                                source = filePath
+                                    ?.takeIf { it.isNotBlank() }
+                                    ?.let { ScenarioSource(filePath = it, line = scenarioLine) },
                             )
                         )
                     } else {

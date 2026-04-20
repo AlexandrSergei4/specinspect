@@ -117,6 +117,7 @@ class GitHubContentsSpecificationImporter(
                                 branch = branch,
                                 token = token,
                             ),
+                            path = entry.path,
                         )
                     }
                     entry.type == "dir" -> {

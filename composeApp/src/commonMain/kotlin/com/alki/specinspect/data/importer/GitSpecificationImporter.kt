@@ -10,6 +10,7 @@ data class GitSpecificationImportRequest(
 data class ImportedSpecFile(
     val name: String,
     val content: String,
+    val path: String = "",
 )
 
 data class AvailableGitRepository(

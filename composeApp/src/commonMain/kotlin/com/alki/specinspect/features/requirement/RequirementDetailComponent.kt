@@ -10,6 +10,7 @@ import com.alki.specinspect.data.models.Subspec
 import com.alki.specinspect.data.models.stats
 import com.alki.specinspect.data.repository.ReviewRepository
 import com.alki.specinspect.data.repository.SpecificationRepository
+import com.alki.specinspect.util.UrlOpener
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.lifecycle.doOnResume
 import kotlinx.coroutines.CoroutineScope
@@ -28,6 +29,7 @@ interface RequirementDetailComponent {
     fun onStartReview()
     fun onFilter(filter: StatsFilter)
     fun onSetStatus(scenarioId: String, status: ReviewStatus)
+    fun onOpenSource(url: String)
 }
 
 data class ScenarioCardState(
@@ -38,6 +40,7 @@ data class ScenarioCardState(
     val thenText: String,
     val lastReviewedAt: Long?,
     val status: ReviewStatus,
+    val sourceUrl: String? = null,
 )
 
 data class RequirementDetailState(
@@ -79,7 +82,7 @@ class DefaultRequirementDetailComponent(
         val sub: Subspec = spec.subspecs.firstOrNull { it.id == subspecId } ?: return
         val req: Requirement = sub.requirements.firstOrNull { it.id == requirementId } ?: return
         val statusOf = reviewRepo.snapshotStatusOf()
-        val cards = req.scenarios.mapIndexed { idx, sc: Scenario ->
+        val rebuiltCards = req.scenarios.mapIndexed { idx, sc: Scenario ->
             ScenarioCardState(
                 id = sc.id,
                 index = idx + 1,
@@ -88,9 +91,15 @@ class DefaultRequirementDetailComponent(
                 thenText = sc.thenText,
                 lastReviewedAt = reviewRepo.scenarioReviewedAt(sc.id),
                 status = statusOf(sc),
+                sourceUrl = spec.gitHubUrlFor(sc),
             )
-        }.sortedByDescending { reviewRepo.scenarioReviewedAt(it.id) ?: Long.MIN_VALUE }
+        }
         val current = _state.value
+        val cards = if (current.scenarios.isEmpty()) {
+            rebuiltCards.sortedByDescending { it.lastReviewedAt ?: Long.MIN_VALUE }
+        } else {
+            rebuiltCards.keepCurrentOrder(current.scenarios)
+        }
         _state.value = RequirementDetailState(
             breadcrumb = "${spec.name} / ${sub.name}",
             title = req.title,
@@ -122,4 +131,29 @@ class DefaultRequirementDetailComponent(
     override fun onSetStatus(scenarioId: String, status: ReviewStatus) {
         reviewRepo.setStatus(specId, subspecId, requirementId, scenarioId, status)
     }
+
+    override fun onOpenSource(url: String) {
+        UrlOpener.openUrl(url)
+    }
+}
+
+internal fun List<ScenarioCardState>.keepCurrentOrder(
+    currentOrder: List<ScenarioCardState>,
+): List<ScenarioCardState> {
+    if (currentOrder.isEmpty()) return this
+
+    val positions = currentOrder.mapIndexed { index, card -> card.id to index }.toMap()
+    return sortedWith(
+        compareBy<ScenarioCardState> { positions[it.id] ?: Int.MAX_VALUE }
+            .thenBy { it.index },
+    )
+}
+
+private fun Specification.gitHubUrlFor(scenario: Scenario): String? {
+    val source = scenario.source ?: return null
+    val gitSource = gitSource ?: return null
+    if (gitSource.repository.isBlank() || gitSource.branch.isBlank() || source.filePath.isBlank() || source.line <= 0) {
+        return null
+    }
+    return "https://github.com/${gitSource.repository}/blob/${gitSource.branch}/${source.filePath}#L${source.line}"
 }

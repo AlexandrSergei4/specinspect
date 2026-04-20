@@ -43,11 +43,13 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.alki.specinspect.data.models.ReviewStatus
+import com.alki.specinspect.ui.components.IconChip
 import com.alki.specinspect.ui.components.ThenBlock
 import com.alki.specinspect.ui.components.WhenBlock
 import com.alki.specinspect.ui.theme.AppColors
 import compose.icons.TablerIcons
 import compose.icons.tablericons.ArrowBackUp
+import compose.icons.tablericons.BrandGithub
 import compose.icons.tablericons.Check
 import compose.icons.tablericons.ChevronLeft
 import compose.icons.tablericons.X
@@ -115,6 +117,7 @@ fun ScenarioReviewScreen(component: ScenarioReviewComponent) {
                         index = state.currentIndex,
                         total = state.total,
                         specName = state.title,
+                        onOpenSource = component::onOpenSource,
                         onSwiped = component::onSwipe,
                     )
                 }
@@ -160,6 +163,7 @@ private fun SwipeCard(
     index: Int,
     total: Int,
     specName: String,
+    onOpenSource: (String) -> Unit,
     onSwiped: (ReviewStatus) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
@@ -219,11 +223,28 @@ private fun SwipeCard(
                     .background(AppColors.Light)
                     .padding(horizontal = 24.dp, vertical = 20.dp),
             ) {
-                Text(specName.uppercase(), style = MaterialTheme.typography.labelSmall, color = AppColors.GreyViolet)
-                Spacer(Modifier.height(8.dp))
-                Text(card.title, style = MaterialTheme.typography.titleLarge, color = AppColors.Dark)
-                Spacer(Modifier.height(4.dp))
-                Text("${index + 1} / $total", style = MaterialTheme.typography.bodySmall, color = AppColors.GreyViolet)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.Top,
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(specName.uppercase(), style = MaterialTheme.typography.labelSmall, color = AppColors.GreyViolet)
+                        Spacer(Modifier.height(8.dp))
+                        Text(card.title, style = MaterialTheme.typography.titleLarge, color = AppColors.Dark)
+                        Spacer(Modifier.height(4.dp))
+                        Text("${index + 1} / $total", style = MaterialTheme.typography.bodySmall, color = AppColors.GreyViolet)
+                    }
+                    if (card.sourceUrl != null) {
+                        Spacer(Modifier.size(12.dp))
+                        IconChip(
+                            icon = TablerIcons.BrandGithub,
+                            onClick = { onOpenSource(card.sourceUrl) },
+                            background = AppColors.White,
+                            iconTint = AppColors.Dark,
+                            contentDescription = "Открыть источник на GitHub",
+                        )
+                    }
+                }
             }
             Column(
                 modifier = Modifier

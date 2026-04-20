@@ -250,15 +250,24 @@ class DefaultAddSpecComponent(
     }
 
     private suspend fun loadSpecification(state: AddSpecState): Specification {
+        val repositoryUrl = state.repositoryUrl.trim()
+        val branch = state.branch.trim()
         val files = importer.importSpecification(
             GitSpecificationImportRequest(
-                repositoryUrl = state.repositoryUrl.trim(),
-                branch = state.branch.trim(),
+                repositoryUrl = repositoryUrl,
+                branch = branch,
                 specificationPath = state.specificationPath.trim(),
                 userAccessToken = state.userAccessToken.trim(),
             )
         )
-        return ImportedSpecificationFactory.create(name = state.name, files = files)
+        return ImportedSpecificationFactory.create(
+            name = state.name,
+            files = files,
+            gitSource = ImportedSpecificationFactory.gitSourceFrom(
+                repositoryUrl = repositoryUrl,
+                branch = branch,
+            ),
+        )
     }
 
     private fun AddSpecState.recomputeCanSubmit(clearError: Boolean = true): AddSpecState =

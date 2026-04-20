@@ -61,7 +61,7 @@ fun SpecDetailScreen(component: SpecDetailComponent) {
             item {
                 WhiteCard {
                     Text(
-                        "Общая статистика",
+                        "Статистика спецификаций",
                         style = MaterialTheme.typography.titleSmall,
                         color = AppColors.Dark,
                     )

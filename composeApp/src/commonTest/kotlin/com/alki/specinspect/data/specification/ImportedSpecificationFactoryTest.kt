@@ -1,9 +1,11 @@
 package com.alki.specinspect.data.specification
 
 import com.alki.specinspect.data.importer.ImportedSpecFile
+import com.alki.specinspect.data.models.GitSource
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class ImportedSpecificationFactoryTest {
@@ -15,6 +17,7 @@ class ImportedSpecificationFactoryTest {
             files = listOf(
                 ImportedSpecFile(
                     name = "dashboard",
+                    path = "openspec/specs/dashboard/spec.md",
                     content = openSpec(
                         requirementName = "Dashboard",
                         whenText = "loads data",
@@ -28,6 +31,11 @@ class ImportedSpecificationFactoryTest {
         assertEquals(1, specification.subspecs.size)
         assertEquals("dashboard", specification.subspecs.single().name)
         assertEquals(1, specification.subspecs.single().requirements.single().scenarios.size)
+        assertEquals(
+            "openspec/specs/dashboard/spec.md",
+            specification.subspecs.single().requirements.single().scenarios.single().source?.filePath,
+        )
+        assertEquals(6, specification.subspecs.single().requirements.single().scenarios.single().source?.line)
     }
 
     @Test
@@ -37,8 +45,13 @@ class ImportedSpecificationFactoryTest {
             files = listOf(
                 ImportedSpecFile(
                     name = "auth-flow",
+                    path = ".specify/specs/auth-flow/spec.md",
                     content = specKit(),
                 ),
+            ),
+            gitSource = GitSource(
+                repository = "octo-org/specinspect",
+                branch = "main",
             ),
         )
 
@@ -49,10 +62,13 @@ class ImportedSpecificationFactoryTest {
         assertEquals("Authentication Flow", subspec.name)
         assertEquals("Sign in with email", requirement.title)
         assertEquals(2, requirement.scenarios.size)
+        assertNotNull(specification.gitSource)
         assertTrue(requirement.description.contains("Functional Requirements:"))
         assertTrue(requirement.description.contains("Edge Cases:"))
         assertEquals("Given the user is on the sign-in screen\nWhen they submit valid credentials", firstScenario.whenText)
         assertEquals("the dashboard is shown", firstScenario.thenText)
+        assertEquals(".specify/specs/auth-flow/spec.md", firstScenario.source?.filePath)
+        assertEquals(10, firstScenario.source?.line)
     }
 
     @Test
