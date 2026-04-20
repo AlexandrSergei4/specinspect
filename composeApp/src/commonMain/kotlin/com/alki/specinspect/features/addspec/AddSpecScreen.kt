@@ -104,7 +104,7 @@ fun AddSpecScreen(component: AddSpecComponent) {
             WhiteCard {
                 LabeledField(
                     label = "Путь до спецификации",
-                    placeholder = "openspec/specs",
+                    placeholder = "openspec/specs or .specify/specs",
                     value = state.specificationPath,
                     onValueChange = component::onSpecificationPathChanged,
                 )
@@ -119,7 +119,7 @@ fun AddSpecScreen(component: AddSpecComponent) {
                 Spacer(Modifier.height(8.dp))
                 Text(
                     "Приложение обращается к GitHub REST Contents API, использует user access token, обходит указанную папку " +
-                        "и загружает каждый найденный `spec.md` как отдельную подспецификацию.",
+                        "и загружает каждый найденный `spec.md` как отдельную подспецификацию. Сейчас поддерживаются форматы OpenSpec и spec-kit.",
                     style = MaterialTheme.typography.bodySmall,
                     color = AppColors.GreyViolet,
                 )
@@ -138,7 +138,7 @@ fun AddSpecScreen(component: AddSpecComponent) {
                         .padding(12.dp),
                 ) {
                     Text(
-                        text = "openspec/\n└─ specs/\n   ├─ dashboard/\n   │ └─ spec.md\n   ├─ events-feed/\n   │ └─ spec.md",
+                        text = "openspec/\n└─ specs/\n   └─ dashboard/spec.md\n\n.specify/\n└─ specs/\n   └─ auth-flow/spec.md",
                         style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace),
                         color = AppColors.Dark,
                     )

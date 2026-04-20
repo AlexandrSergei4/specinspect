@@ -4,7 +4,7 @@ import com.alki.specinspect.data.importer.AvailableGitRepository
 import com.alki.specinspect.data.importer.GitSpecificationImportRequest
 import com.alki.specinspect.data.importer.GitSpecificationImporter
 import com.alki.specinspect.data.models.Specification
-import com.alki.specinspect.data.openspec.OpenSpecSpecificationFactory
+import com.alki.specinspect.data.specification.ImportedSpecificationFactory
 import com.alki.specinspect.data.repository.SpecificationRepository
 import com.alki.specinspect.data.storage.UserAccessTokenSecureStorage
 import com.alki.specinspect.util.UrlOpener
@@ -258,7 +258,7 @@ class DefaultAddSpecComponent(
                 userAccessToken = state.userAccessToken.trim(),
             )
         )
-        return OpenSpecSpecificationFactory.create(name = state.name, files = files)
+        return ImportedSpecificationFactory.create(name = state.name, files = files)
     }
 
     private fun AddSpecState.recomputeCanSubmit(clearError: Boolean = true): AddSpecState =
