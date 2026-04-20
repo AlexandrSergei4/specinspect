@@ -1,7 +1,11 @@
 package com.alki.specinspect.navigation
 
+import com.alki.specinspect.data.importer.GitSpecificationImporter
+import com.alki.specinspect.data.importer.UnsupportedGitSpecificationImporter
 import com.alki.specinspect.data.repository.ReviewRepository
 import com.alki.specinspect.data.repository.SpecificationRepository
+import com.alki.specinspect.data.storage.NoOpUserAccessTokenSecureStorage
+import com.alki.specinspect.data.storage.UserAccessTokenSecureStorage
 import com.alki.specinspect.features.addspec.AddSpecComponent
 import com.alki.specinspect.features.addspec.DefaultAddSpecComponent
 import com.alki.specinspect.features.myspecs.DefaultMySpecsComponent
@@ -32,6 +36,8 @@ class RootComponent(
     componentContext: ComponentContext,
     private val specRepo: SpecificationRepository,
     private val reviewRepo: ReviewRepository,
+    private val gitSpecificationImporter: GitSpecificationImporter = UnsupportedGitSpecificationImporter(),
+    private val tokenStorage: UserAccessTokenSecureStorage = NoOpUserAccessTokenSecureStorage,
 ) : ComponentContext by componentContext {
 
     private val navigation = StackNavigation<Config>()
@@ -119,6 +125,8 @@ class RootComponent(
             DefaultAddSpecComponent(
                 componentContext = context,
                 repo = specRepo,
+                importer = gitSpecificationImporter,
+                tokenStorage = tokenStorage,
                 onBackCallback = { navigation.pop() },
                 onAddedCallback = { navigation.pop() },
             )

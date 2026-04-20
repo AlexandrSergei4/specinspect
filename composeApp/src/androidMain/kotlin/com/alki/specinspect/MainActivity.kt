@@ -5,9 +5,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import com.alki.specinspect.data.importer.GitHubContentsSpecificationImporter
 import com.alki.specinspect.data.repository.ReviewRepository
 import com.alki.specinspect.data.repository.SpecificationRepository
+import com.alki.specinspect.data.storage.AndroidUserAccessTokenSecureStorage
 import com.alki.specinspect.di.appModule
+import com.alki.specinspect.di.platformModule
 import com.alki.specinspect.navigation.RootComponent
 import com.alki.specinspect.navigation.RootContent
 import com.alki.specinspect.util.ClipboardManager
@@ -30,7 +33,7 @@ class MainActivity : ComponentActivity() {
         if (GlobalContext.getOrNull() == null) {
             startKoin {
                 androidContext(applicationContext)
-                modules(appModule)
+                modules(appModule, platformModule)
             }
         }
 
@@ -53,6 +56,8 @@ class MainActivity : ComponentActivity() {
             componentContext = defaultComponentContext(),
             specRepo = specRepo,
             reviewRepo = reviewRepo,
+            gitSpecificationImporter = GitHubContentsSpecificationImporter(),
+            tokenStorage = AndroidUserAccessTokenSecureStorage(applicationContext),
         )
 
         setContent {
