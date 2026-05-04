@@ -64,4 +64,26 @@ actual object ImageSharing {
             }
         }
     }
+
+    actual suspend fun shareText(text: String, title: String) {
+        val ctx = context ?: return
+
+        withContext(Dispatchers.Main) {
+            try {
+                val shareIntent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_TEXT, text)
+                    putExtra(Intent.EXTRA_TITLE, title)
+                    type = "text/plain"
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+
+                ctx.startActivity(Intent.createChooser(shareIntent, title).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                })
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
 }

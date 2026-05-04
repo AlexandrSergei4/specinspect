@@ -2,6 +2,7 @@ package com.alki.specinspect.features.review
 
 import com.alki.specinspect.data.models.ReviewStatus
 import com.alki.specinspect.data.models.Scenario
+import com.alki.specinspect.data.models.gitHubUrlFor
 import com.alki.specinspect.data.repository.ReviewRepository
 import com.alki.specinspect.data.repository.SpecificationRepository
 import com.alki.specinspect.util.UrlOpener
@@ -216,13 +217,4 @@ class DefaultScenarioReviewComponent(
     override fun onOpenSource(url: String) {
         UrlOpener.openUrl(url)
     }
-}
-
-private fun com.alki.specinspect.data.models.Specification.gitHubUrlFor(scenario: Scenario): String? {
-    val source = scenario.source ?: return null
-    val gitSource = gitSource ?: return null
-    if (gitSource.repository.isBlank() || gitSource.branch.isBlank() || source.filePath.isBlank() || source.line <= 0) {
-        return null
-    }
-    return "https://github.com/${gitSource.repository}/blob/${gitSource.branch}/${source.filePath}#L${source.line}"
 }

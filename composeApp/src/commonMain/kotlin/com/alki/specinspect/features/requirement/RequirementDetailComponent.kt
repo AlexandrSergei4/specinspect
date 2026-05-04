@@ -7,9 +7,12 @@ import com.alki.specinspect.data.models.Scenario
 import com.alki.specinspect.data.models.Specification
 import com.alki.specinspect.data.models.StatsFilter
 import com.alki.specinspect.data.models.Subspec
+import com.alki.specinspect.data.models.buildReviewReport
+import com.alki.specinspect.data.models.gitHubUrlFor
 import com.alki.specinspect.data.models.stats
 import com.alki.specinspect.data.repository.ReviewRepository
 import com.alki.specinspect.data.repository.SpecificationRepository
+import com.alki.specinspect.util.ImageSharing
 import com.alki.specinspect.util.UrlOpener
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.lifecycle.doOnResume
@@ -22,11 +25,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 interface RequirementDetailComponent {
     val state: StateFlow<RequirementDetailState>
     fun onBack()
     fun onStartReview()
+    fun onShareReport(includeCorrect: Boolean, includeIncorrect: Boolean)
     fun onFilter(filter: StatsFilter)
     fun onSetStatus(scenarioId: String, status: ReviewStatus)
     fun onOpenSource(url: String)
@@ -122,6 +127,19 @@ class DefaultRequirementDetailComponent(
 
     override fun onBack() = onBackCallback()
     override fun onStartReview() = onStartReviewCallback(specId, subspecId, requirementId)
+    override fun onShareReport(includeCorrect: Boolean, includeIncorrect: Boolean) {
+        val spec = specRepo.getById(specId) ?: return
+        val report = spec.buildReviewReport(
+            statusOf = reviewRepo.snapshotStatusOf(),
+            subspecId = subspecId,
+            requirementId = requirementId,
+            includeCorrect = includeCorrect,
+            includeIncorrect = includeIncorrect,
+        )
+        scope.launch {
+            ImageSharing.shareText(report, "Поделиться отчётом")
+        }
+    }
     override fun onFilter(filter: StatsFilter) {
         _state.value = _state.value.copy(
             filter = filter,
@@ -147,13 +165,4 @@ internal fun List<ScenarioCardState>.keepCurrentOrder(
         compareBy<ScenarioCardState> { positions[it.id] ?: Int.MAX_VALUE }
             .thenBy { it.index },
     )
-}
-
-private fun Specification.gitHubUrlFor(scenario: Scenario): String? {
-    val source = scenario.source ?: return null
-    val gitSource = gitSource ?: return null
-    if (gitSource.repository.isBlank() || gitSource.branch.isBlank() || source.filePath.isBlank() || source.line <= 0) {
-        return null
-    }
-    return "https://github.com/${gitSource.repository}/blob/${gitSource.branch}/${source.filePath}#L${source.line}"
 }

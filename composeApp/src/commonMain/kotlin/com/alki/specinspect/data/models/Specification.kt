@@ -165,3 +165,12 @@ fun Specification.scenarioStats(statusOf: (Scenario) -> ReviewStatus): ReviewSta
 fun Specification.totalRequirements(): Int = subspecs.sumOf { it.requirements.size }
 fun Specification.totalScenarios(): Int = subspecs.sumOf { sub -> sub.requirements.sumOf { it.scenarios.size } }
 fun Subspec.totalScenarios(): Int = requirements.sumOf { it.scenarios.size }
+
+fun Specification.gitHubUrlFor(scenario: Scenario): String? {
+    val source = scenario.source ?: return null
+    val gitSource = gitSource ?: return null
+    if (gitSource.repository.isBlank() || gitSource.branch.isBlank() || source.filePath.isBlank() || source.line <= 0) {
+        return null
+    }
+    return "https://github.com/${gitSource.repository}/blob/${gitSource.branch}/${source.filePath}#L${source.line}"
+}

@@ -80,6 +80,9 @@ class RootComponent(
                 onOpenSubspecCallback = { specId, subspecId ->
                     navigation.pushNew(Config.SubspecDetail(specId, subspecId))
                 },
+                onOpenRequirementCallback = { specId, subspecId, reqId ->
+                    navigation.pushNew(Config.RequirementDetail(specId, subspecId, reqId))
+                },
             )
         )
         is Config.SubspecDetail -> Child.SubspecDetail(

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -30,8 +29,11 @@ import com.alki.specinspect.ui.components.AppTopBar
 import com.alki.specinspect.ui.components.PrimaryButton
 import com.alki.specinspect.ui.components.ReviewProgressBar
 import com.alki.specinspect.ui.components.ReviewTimestampText
-import com.alki.specinspect.ui.components.SectionHeader
+import com.alki.specinspect.ui.components.ScenarioReviewCard
+import com.alki.specinspect.ui.components.SectionDropdown
+import com.alki.specinspect.ui.components.SectionDropdownOption
 import com.alki.specinspect.ui.components.StatsBlocks
+import com.alki.specinspect.ui.components.StatsCardHeader
 import com.alki.specinspect.ui.components.StatsRow
 import com.alki.specinspect.ui.components.WhiteCard
 import com.alki.specinspect.ui.theme.AppColors
@@ -63,14 +65,13 @@ fun SubspecDetailScreen(component: SubspecDetailComponent) {
             }
             item {
                 WhiteCard {
-                    Text(
-                        "Статистика требований",
-                        style = MaterialTheme.typography.titleSmall,
-                        color = AppColors.Dark,
+                    StatsCardHeader(
+                        text = "Общая статистика",
+                        onShare = component::onShareReport,
                     )
                     Spacer(Modifier.height(16.dp))
                     StatsBlocks(
-                        stats = state.requirementStats,
+                        stats = state.scenarioStats,
                         selected = state.filter,
                         onFilter = component::onFilter,
                     )
@@ -85,13 +86,42 @@ fun SubspecDetailScreen(component: SubspecDetailComponent) {
                 }
             }
             item {
-                SectionHeader("Требования (${state.visibleRequirements.size})")
-            }
-            items(state.visibleRequirements, key = { it.id }) { card ->
-                RequirementCard(
-                    card = card,
-                    onClick = { component.onOpenRequirement(card.id) },
+                SectionDropdown(
+                    selected = state.listMode,
+                    options = listOf(
+                        SectionDropdownOption(SubspecListMode.REQUIREMENTS, "Требования", state.visibleRequirements.size),
+                        SectionDropdownOption(SubspecListMode.SCENARIOS, "Сценарии", state.visibleScenarios.size),
+                    ),
+                    onSelected = component::onListModeChange,
                 )
+            }
+            when (state.listMode) {
+                SubspecListMode.REQUIREMENTS -> {
+                    items(state.visibleRequirements, key = { it.id }) { card ->
+                        RequirementCard(
+                            card = card,
+                            onClick = { component.onOpenRequirement(card.id) },
+                        )
+                    }
+                }
+                SubspecListMode.SCENARIOS -> {
+                    items(state.visibleScenarios, key = { it.id }) { sc ->
+                        ScenarioReviewCard(
+                            label = "СЦЕНАРИЙ ${sc.index}",
+                            title = sc.title,
+                            whenText = sc.whenText,
+                            thenText = sc.thenText,
+                            lastReviewedAt = sc.lastReviewedAt,
+                            status = sc.status,
+                            sourceUrl = sc.sourceUrl,
+                            context = sc.contextLabel,
+                            onOpenSource = component::onOpenSource,
+                            onSetStatus = { status ->
+                                component.onSetScenarioStatus(sc.requirementId, sc.id, status)
+                            },
+                        )
+                    }
+                }
             }
         }
     }

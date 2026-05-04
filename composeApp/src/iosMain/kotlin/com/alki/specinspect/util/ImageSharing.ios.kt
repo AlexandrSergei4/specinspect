@@ -89,4 +89,24 @@ actual object ImageSharing {
             }
         }
     }
+
+    actual suspend fun shareText(text: String, title: String) {
+        withContext(Dispatchers.Main) {
+            try {
+                val activityViewController = UIActivityViewController(
+                    activityItems = listOf(text),
+                    applicationActivities = null
+                )
+
+                val rootViewController = UIApplication.sharedApplication.keyWindow?.rootViewController
+                rootViewController?.presentViewController(
+                    activityViewController,
+                    animated = true,
+                    completion = null
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
 }
