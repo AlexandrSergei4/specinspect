@@ -1,5 +1,8 @@
 package com.alki.specinspect.data.importer
 
+import com.alki.specinspect.localization.AppTextKey
+import com.alki.specinspect.localization.localizedError
+
 data class GitSpecificationImportRequest(
     val repositoryUrl: String,
     val branch: String,
@@ -24,19 +27,17 @@ interface GitSpecificationImporter {
     suspend fun importSpecification(request: GitSpecificationImportRequest): List<ImportedSpecFile>
 }
 
-class UnsupportedGitSpecificationImporter(
-    private val message: String = "Импорт спецификации не настроен на этой платформе",
-) : GitSpecificationImporter {
+class UnsupportedGitSpecificationImporter : GitSpecificationImporter {
 
     override suspend fun loadRepositories(userAccessToken: String): List<AvailableGitRepository> {
-        throw IllegalStateException(message)
+        localizedError(AppTextKey.ErrorImportUnsupported)
     }
 
     override suspend fun loadBranches(repositoryUrl: String, userAccessToken: String): List<String> {
-        throw IllegalStateException(message)
+        localizedError(AppTextKey.ErrorImportUnsupported)
     }
 
     override suspend fun importSpecification(request: GitSpecificationImportRequest): List<ImportedSpecFile> {
-        throw IllegalStateException(message)
+        localizedError(AppTextKey.ErrorImportUnsupported)
     }
 }

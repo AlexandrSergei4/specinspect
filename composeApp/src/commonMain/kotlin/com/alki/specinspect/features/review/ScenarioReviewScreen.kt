@@ -54,6 +54,14 @@ import compose.icons.tablericons.Check
 import compose.icons.tablericons.ChevronLeft
 import compose.icons.tablericons.X
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
+import specinspect.composeapp.generated.resources.Res
+import specinspect.composeapp.generated.resources.action_back
+import specinspect.composeapp.generated.resources.action_open_github_source
+import specinspect.composeapp.generated.resources.demo_specification_name
+import specinspect.composeapp.generated.resources.label_review_requirement
+import specinspect.composeapp.generated.resources.review_all_scenarios_done
+import specinspect.composeapp.generated.resources.review_progress_format
 
 private const val SWIPE_THRESHOLD_PX = 220f
 
@@ -61,6 +69,11 @@ private const val SWIPE_THRESHOLD_PX = 220f
 fun ScenarioReviewScreen(component: ScenarioReviewComponent) {
     val state by component.state.collectAsState()
     val card = state.cards.getOrNull(state.currentIndex)
+    val specDisplayName = if (state.isDemoSpec) {
+        stringResource(Res.string.demo_specification_name)
+    } else {
+        state.title
+    }
 
     Box(
         modifier = Modifier
@@ -85,14 +98,18 @@ fun ScenarioReviewScreen(component: ScenarioReviewComponent) {
                 ) {
                     Icon(
                         TablerIcons.ChevronLeft,
-                        contentDescription = "Назад",
+                        contentDescription = stringResource(Res.string.action_back),
                         tint = AppColors.Dark,
                         modifier = Modifier.size(22.dp),
                     )
                 }
                 Spacer(Modifier.weight(1f))
                 Text(
-                    text = "${(state.currentIndex + 1).coerceAtMost(state.total)} / ${state.total}",
+                    text = stringResource(
+                        Res.string.review_progress_format,
+                        (state.currentIndex + 1).coerceAtMost(state.total),
+                        state.total,
+                    ),
                     style = MaterialTheme.typography.bodyMedium,
                     color = AppColors.GreyViolet,
                 )
@@ -107,7 +124,7 @@ fun ScenarioReviewScreen(component: ScenarioReviewComponent) {
             ) {
                 if (card == null) {
                     Text(
-                        "Все сценарии просмотрены!",
+                        stringResource(Res.string.review_all_scenarios_done),
                         style = MaterialTheme.typography.titleMedium,
                         color = AppColors.GreyViolet,
                     )
@@ -116,7 +133,7 @@ fun ScenarioReviewScreen(component: ScenarioReviewComponent) {
                         card = card,
                         index = state.currentIndex,
                         total = state.total,
-                        specName = state.title,
+                        specName = specDisplayName,
                         onOpenSource = component::onOpenSource,
                         onSwiped = component::onSwipe,
                     )
@@ -232,7 +249,11 @@ private fun SwipeCard(
                         Spacer(Modifier.height(8.dp))
                         Text(card.title, style = MaterialTheme.typography.titleLarge, color = AppColors.Dark)
                         Spacer(Modifier.height(4.dp))
-                        Text("${index + 1} / $total", style = MaterialTheme.typography.bodySmall, color = AppColors.GreyViolet)
+                        Text(
+                            stringResource(Res.string.review_progress_format, index + 1, total),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = AppColors.GreyViolet,
+                        )
                     }
                     if (card.sourceUrl != null) {
                         Spacer(Modifier.size(12.dp))
@@ -241,7 +262,7 @@ private fun SwipeCard(
                             onClick = { onOpenSource(card.sourceUrl) },
                             background = AppColors.White,
                             iconTint = AppColors.Dark,
-                            contentDescription = "Открыть источник на GitHub",
+                            contentDescription = stringResource(Res.string.action_open_github_source),
                         )
                     }
                 }
@@ -268,7 +289,11 @@ private fun SwipeCard(
                         .background(AppColors.Light)
                         .padding(horizontal = 24.dp, vertical = 20.dp),
                 ) {
-                    Text("REQUIREMENT", style = MaterialTheme.typography.labelSmall, color = AppColors.GreyViolet)
+                    Text(
+                        stringResource(Res.string.label_review_requirement),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = AppColors.GreyViolet,
+                    )
                     Spacer(Modifier.height(8.dp))
                     Text(
                         card.requirementText,

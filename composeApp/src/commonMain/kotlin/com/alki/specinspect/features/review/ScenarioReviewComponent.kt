@@ -65,6 +65,7 @@ private data class ReviewSource(
 
 data class ScenarioReviewState(
     val title: String = "",
+    val isDemoSpec: Boolean = false,
     val cards: List<ReviewCardState> = emptyList(),
     val currentIndex: Int = 0,
     val total: Int = 0,
@@ -146,6 +147,7 @@ class DefaultScenarioReviewComponent(
 
         _state.value = ScenarioReviewState(
             title = spec.name,
+            isDemoSpec = spec.isDemo,
             cards = unreviewed.map { source ->
                 ReviewCardState(
                     id = source.scenario.id,

@@ -37,6 +37,15 @@ import com.alki.specinspect.ui.theme.AppColors
 import compose.icons.TablerIcons
 import compose.icons.tablericons.ChevronDown
 import compose.icons.tablericons.Share
+import org.jetbrains.compose.resources.stringResource
+import specinspect.composeapp.generated.resources.Res
+import specinspect.composeapp.generated.resources.action_cancel
+import specinspect.composeapp.generated.resources.action_share
+import specinspect.composeapp.generated.resources.label_then
+import specinspect.composeapp.generated.resources.label_when
+import specinspect.composeapp.generated.resources.report_include_correct
+import specinspect.composeapp.generated.resources.report_include_incorrect
+import specinspect.composeapp.generated.resources.report_options_title
 
 /**
  * Базовая белая карточка с тонкой границей и мягкой тенью.
@@ -127,7 +136,7 @@ fun StatsCardHeader(
             },
             background = AppColors.GreyVioletSurface,
             iconTint = AppColors.GreyViolet,
-            contentDescription = "Поделиться",
+            contentDescription = stringResource(Res.string.action_share),
         )
     }
 
@@ -136,7 +145,7 @@ fun StatsCardHeader(
             onDismissRequest = { showReportDialog = false },
             title = {
                 Text(
-                    text = "Что включить в отчёт",
+                    text = stringResource(Res.string.report_options_title),
                     style = MaterialTheme.typography.titleMedium,
                     color = AppColors.Dark,
                 )
@@ -144,12 +153,12 @@ fun StatsCardHeader(
             text = {
                 Column {
                     ReportStatusOptionRow(
-                        text = "Некорректные",
+                        text = stringResource(Res.string.report_include_incorrect),
                         checked = includeIncorrect,
                         onCheckedChange = { includeIncorrect = it },
                     )
                     ReportStatusOptionRow(
-                        text = "Корректные",
+                        text = stringResource(Res.string.report_include_correct),
                         checked = includeCorrect,
                         onCheckedChange = { includeCorrect = it },
                     )
@@ -163,12 +172,12 @@ fun StatsCardHeader(
                         onShare(includeCorrect, includeIncorrect)
                     },
                 ) {
-                    Text("Поделиться")
+                    Text(stringResource(Res.string.action_share))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showReportDialog = false }) {
-                    Text("Отмена")
+                    Text(stringResource(Res.string.action_cancel))
                 }
             },
         )
@@ -204,11 +213,8 @@ private fun ReportStatusOptionRow(
 
 data class SectionDropdownOption<T>(
     val value: T,
-    val label: String,
-    val count: Int,
-) {
-    val text: String get() = "$label ($count)"
-}
+    val text: String,
+)
 
 @Composable
 fun <T> SectionDropdown(
@@ -284,7 +290,7 @@ fun WhenBlock(text: String) {
         padding = PaddingValues(horizontal = 14.dp, vertical = 12.dp),
     ) {
         Text(
-            "WHEN",
+            stringResource(Res.string.label_when),
             style = MaterialTheme.typography.labelMedium,
             color = AppColors.Teal,
         )
@@ -304,7 +310,7 @@ fun ThenBlock(text: String) {
         padding = PaddingValues(horizontal = 14.dp, vertical = 12.dp),
     ) {
         Text(
-            "THEN",
+            stringResource(Res.string.label_then),
             style = MaterialTheme.typography.labelMedium,
             color = AppColors.Dark,
         )

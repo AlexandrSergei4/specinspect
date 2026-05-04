@@ -30,9 +30,14 @@ class ReviewReportTest {
             ),
         )
 
-        val report = specification.buildReviewReport(statusOf = { sc ->
-            if (sc.id == evaluated.id) ReviewStatus.CORRECT else ReviewStatus.UNREVIEWED
-        })
+        val report = specification.buildReviewReport(
+            statusOf = { sc ->
+                if (sc.id == evaluated.id) ReviewStatus.CORRECT else ReviewStatus.UNREVIEWED
+            },
+            includeCorrect = true,
+            includeIncorrect = true,
+            strings = testReviewReportStrings,
+        )
 
         assertContains(report, "Подспека: dashboard")
         assertContains(report, "Требование: Default dashboard")
@@ -70,6 +75,7 @@ class ReviewReportTest {
             },
             includeCorrect = false,
             includeIncorrect = true,
+            strings = testReviewReportStrings,
         )
 
         assertContains(report, "❌ Некорректный: Incorrect scenario")
@@ -81,5 +87,25 @@ class ReviewReportTest {
         title = title,
         whenText = "user opens the app",
         thenText = "dashboard is shown",
+    )
+
+    private val testReviewReportStrings = ReviewReportStrings(
+        title = "Отчёт ревью",
+        specificationFormat = "Спецификация: %1\$s",
+        evaluatedCountFormat = "Оценённых сценариев: %1\$d",
+        empty = "Оценённых сценариев пока нет.",
+        subspecFormat = "Подспека: %1\$s",
+        requirementFormat = "  Требование: %1\$s",
+        descriptionFormat = "  Описание: %1\$s",
+        scenarioFormat = "    - %1\$s %2\$s: %3\$s",
+        whenFormat = "      WHEN: %1\$s",
+        thenFormat = "      THEN: %1\$s",
+        sourceFormat = "      Источник: %1\$s",
+        correctMarker = "✅",
+        incorrectMarker = "❌",
+        unreviewedMarker = "",
+        correctStatus = "Корректный",
+        incorrectStatus = "Некорректный",
+        unreviewedStatus = "Неоценённый",
     )
 }

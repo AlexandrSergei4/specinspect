@@ -30,6 +30,11 @@ import compose.icons.TablerIcons
 import compose.icons.tablericons.BrandGithub
 import compose.icons.tablericons.Check
 import compose.icons.tablericons.X
+import org.jetbrains.compose.resources.stringResource
+import specinspect.composeapp.generated.resources.Res
+import specinspect.composeapp.generated.resources.action_open_github_source
+import specinspect.composeapp.generated.resources.status_correct
+import specinspect.composeapp.generated.resources.status_incorrect
 
 @Composable
 fun ScenarioReviewCard(
@@ -82,7 +87,7 @@ fun ScenarioReviewCard(
                     onClick = { onOpenSource(sourceUrl) },
                     background = AppColors.White,
                     iconTint = AppColors.Dark,
-                    contentDescription = "Открыть источник на GitHub",
+                    contentDescription = stringResource(Res.string.action_open_github_source),
                 )
             }
         }
@@ -112,7 +117,7 @@ private fun StatusToggle(
     ) {
         Row(modifier = Modifier.fillMaxWidth()) {
             ToggleSegment(
-                text = "Некорректный",
+                text = stringResource(Res.string.status_incorrect),
                 icon = TablerIcons.X,
                 selected = incorrectSelected,
                 color = AppColors.Coral,
@@ -123,7 +128,7 @@ private fun StatusToggle(
             )
             Spacer(Modifier.width(8.dp))
             ToggleSegment(
-                text = "Корректный",
+                text = stringResource(Res.string.status_correct),
                 icon = TablerIcons.Check,
                 selected = correctSelected,
                 color = AppColors.Teal,

@@ -37,13 +37,37 @@ import com.alki.specinspect.ui.components.StatsCardHeader
 import com.alki.specinspect.ui.components.StatsRow
 import com.alki.specinspect.ui.components.WhiteCard
 import com.alki.specinspect.ui.theme.AppColors
+import com.alki.specinspect.localization.reviewReportStrings
 import compose.icons.TablerIcons
 import compose.icons.tablericons.ChevronRight
 import compose.icons.tablericons.PlayerPlay
+import org.jetbrains.compose.resources.stringResource
+import specinspect.composeapp.generated.resources.Res
+import specinspect.composeapp.generated.resources.action_start_review
+import specinspect.composeapp.generated.resources.breadcrumb_format
+import specinspect.composeapp.generated.resources.count_requirements_scenarios
+import specinspect.composeapp.generated.resources.count_scenarios_reviewed
+import specinspect.composeapp.generated.resources.demo_specification_name
+import specinspect.composeapp.generated.resources.label_requirement
+import specinspect.composeapp.generated.resources.label_scenario
+import specinspect.composeapp.generated.resources.label_specification
+import specinspect.composeapp.generated.resources.section_dropdown_option_format
+import specinspect.composeapp.generated.resources.section_requirements
+import specinspect.composeapp.generated.resources.section_scenarios
+import specinspect.composeapp.generated.resources.section_specs
+import specinspect.composeapp.generated.resources.share_report_title
+import specinspect.composeapp.generated.resources.stats_overview
 
 @Composable
 fun SpecDetailScreen(component: SpecDetailComponent) {
     val state by component.state.collectAsState()
+    val specDisplayName = if (state.isDemoSpec) {
+        stringResource(Res.string.demo_specification_name)
+    } else {
+        state.specName
+    }
+    val reportStrings = reviewReportStrings()
+    val shareReportTitle = stringResource(Res.string.share_report_title)
 
     Box(
         modifier = Modifier
@@ -57,13 +81,21 @@ fun SpecDetailScreen(component: SpecDetailComponent) {
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
             item {
-                AppTopBar(title = state.specName, onBack = component::onBack)
+                AppTopBar(title = specDisplayName, onBack = component::onBack)
             }
             item {
                 WhiteCard {
                     StatsCardHeader(
-                        text = "Общая статистика",
-                        onShare = component::onShareReport,
+                        text = stringResource(Res.string.stats_overview),
+                        onShare = { includeCorrect, includeIncorrect ->
+                            component.onShareReport(
+                                includeCorrect = includeCorrect,
+                                includeIncorrect = includeIncorrect,
+                                shareTitle = shareReportTitle,
+                                reportStrings = reportStrings,
+                                specificationName = specDisplayName,
+                            )
+                        },
                     )
                     Spacer(Modifier.height(16.dp))
                     StatsBlocks(
@@ -73,7 +105,7 @@ fun SpecDetailScreen(component: SpecDetailComponent) {
                     )
                     Spacer(Modifier.height(16.dp))
                     PrimaryButton(
-                        text = "Начать ревью",
+                        text = stringResource(Res.string.action_start_review),
                         onClick = component::onStartReview,
                         leadingIcon = TablerIcons.PlayerPlay,
                         height = 48,
@@ -85,9 +117,30 @@ fun SpecDetailScreen(component: SpecDetailComponent) {
                 SectionDropdown(
                     selected = state.listMode,
                     options = listOf(
-                        SectionDropdownOption(SpecListMode.SUBSPECS, "Спецификации", state.visibleSubspecs.size),
-                        SectionDropdownOption(SpecListMode.REQUIREMENTS, "Требования", state.visibleRequirements.size),
-                        SectionDropdownOption(SpecListMode.SCENARIOS, "Сценарии", state.visibleScenarios.size),
+                        SectionDropdownOption(
+                            SpecListMode.SUBSPECS,
+                            stringResource(
+                                Res.string.section_dropdown_option_format,
+                                stringResource(Res.string.section_specs),
+                                state.visibleSubspecs.size,
+                            ),
+                        ),
+                        SectionDropdownOption(
+                            SpecListMode.REQUIREMENTS,
+                            stringResource(
+                                Res.string.section_dropdown_option_format,
+                                stringResource(Res.string.section_requirements),
+                                state.visibleRequirements.size,
+                            ),
+                        ),
+                        SectionDropdownOption(
+                            SpecListMode.SCENARIOS,
+                            stringResource(
+                                Res.string.section_dropdown_option_format,
+                                stringResource(Res.string.section_scenarios),
+                                state.visibleScenarios.size,
+                            ),
+                        ),
                     ),
                     onSelected = component::onListModeChange,
                 )
@@ -112,14 +165,18 @@ fun SpecDetailScreen(component: SpecDetailComponent) {
                 SpecListMode.SCENARIOS -> {
                     items(state.visibleScenarios, key = { it.id }) { sc ->
                         ScenarioReviewCard(
-                            label = "СЦЕНАРИЙ ${sc.index}",
+                            label = stringResource(Res.string.label_scenario, sc.index),
                             title = sc.title,
                             whenText = sc.whenText,
                             thenText = sc.thenText,
                             lastReviewedAt = sc.lastReviewedAt,
                             status = sc.status,
                             sourceUrl = sc.sourceUrl,
-                            context = sc.contextLabel,
+                            context = stringResource(
+                                Res.string.breadcrumb_format,
+                                sc.contextSubspecName,
+                                sc.contextRequirementTitle,
+                            ),
                             onOpenSource = component::onOpenSource,
                             onSetStatus = { status ->
                                 component.onSetScenarioStatus(sc.subspecId, sc.requirementId, sc.id, status)
@@ -138,7 +195,7 @@ private fun SubspecCard(card: SubspecCardState, onClick: () -> Unit) {
         Row(verticalAlignment = Alignment.Top) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    "СПЕЦИФИКАЦИЯ",
+                    stringResource(Res.string.label_specification),
                     style = MaterialTheme.typography.labelSmall,
                     color = AppColors.GreyViolet,
                 )
@@ -157,7 +214,7 @@ private fun SubspecCard(card: SubspecCardState, onClick: () -> Unit) {
         }
         Spacer(Modifier.height(12.dp))
         Text(
-            "${card.requirementCount} требований • ${card.scenarioCount} сценариев",
+            stringResource(Res.string.count_requirements_scenarios, card.requirementCount, card.scenarioCount),
             style = MaterialTheme.typography.bodySmall,
             color = AppColors.GreyViolet,
         )
@@ -168,7 +225,11 @@ private fun SubspecCard(card: SubspecCardState, onClick: () -> Unit) {
         ReviewProgressBar(stats = card.scenarioStats)
         Spacer(Modifier.height(8.dp))
         Text(
-            text = "${card.scenarioCount} сценариев • ${(card.scenarioStats.reviewedFraction * 100).toInt()}% просмотрено",
+            text = stringResource(
+                Res.string.count_scenarios_reviewed,
+                card.scenarioCount,
+                (card.scenarioStats.reviewedFraction * 100).toInt(),
+            ),
             style = MaterialTheme.typography.bodySmall,
             color = AppColors.GreyViolet,
         )
@@ -181,7 +242,7 @@ private fun SpecRequirementCard(card: SpecRequirementCardState, onClick: () -> U
         Row(verticalAlignment = Alignment.Top) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    "ТРЕБОВАНИЕ",
+                    stringResource(Res.string.label_requirement),
                     style = MaterialTheme.typography.labelSmall,
                     color = AppColors.GreyViolet,
                 )
@@ -220,7 +281,11 @@ private fun SpecRequirementCard(card: SpecRequirementCardState, onClick: () -> U
         ReviewProgressBar(stats = card.scenarioStats)
         Spacer(Modifier.height(8.dp))
         Text(
-            "${card.scenarioCount} сценариев • ${(card.scenarioStats.reviewedFraction * 100).toInt()}% просмотрено",
+            stringResource(
+                Res.string.count_scenarios_reviewed,
+                card.scenarioCount,
+                (card.scenarioStats.reviewedFraction * 100).toInt(),
+            ),
             style = MaterialTheme.typography.bodySmall,
             color = AppColors.GreyViolet,
         )

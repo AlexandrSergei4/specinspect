@@ -7,6 +7,10 @@ import com.alki.specinspect.data.models.Specification
 import com.alki.specinspect.data.specification.ImportedSpecificationFactory
 import com.alki.specinspect.data.repository.SpecificationRepository
 import com.alki.specinspect.data.storage.UserAccessTokenSecureStorage
+import com.alki.specinspect.localization.AppText
+import com.alki.specinspect.localization.AppTextKey
+import com.alki.specinspect.localization.appText
+import com.alki.specinspect.localization.toAppText
 import com.alki.specinspect.util.UrlOpener
 import com.arkivanov.decompose.ComponentContext
 import kotlinx.coroutines.CancellationException
@@ -44,17 +48,17 @@ data class AddSpecState(
     val repositories: List<RepositoryOption> = emptyList(),
     val repositoryUrl: String = "",
     val isRepositoriesLoading: Boolean = false,
-    val repositoriesStatusMessage: String? = REPOSITORIES_TOKEN_HINT,
+    val repositoriesStatusMessage: AppText? = appText(AppTextKey.AddSpecStatusTokenHint),
     val repositoriesStatusIsError: Boolean = false,
     val branches: List<String> = emptyList(),
     val branch: String = "",
     val isBranchesLoading: Boolean = false,
-    val branchesStatusMessage: String? = BRANCHES_REPOSITORY_HINT,
+    val branchesStatusMessage: AppText? = appText(AppTextKey.AddSpecStatusSelectRepository),
     val branchesStatusIsError: Boolean = false,
     val specificationPath: String = "openspec/specs",
     val isLoading: Boolean = false,
     val canSubmit: Boolean = false,
-    val errorMessage: String? = null,
+    val errorMessage: AppText? = null,
 )
 
 class DefaultAddSpecComponent(
@@ -74,7 +78,11 @@ class DefaultAddSpecComponent(
         AddSpecState(
             userAccessToken = savedToken,
             isRepositoriesLoading = savedToken.isNotBlank(),
-            repositoriesStatusMessage = if (savedToken.isBlank()) REPOSITORIES_TOKEN_HINT else REPOSITORIES_LOADING_HINT,
+            repositoriesStatusMessage = if (savedToken.isBlank()) {
+                appText(AppTextKey.AddSpecStatusTokenHint)
+            } else {
+                appText(AppTextKey.AddSpecStatusRepositoriesLoading)
+            },
         )
     )
     override val state: StateFlow<AddSpecState> = _state.asStateFlow()
@@ -101,7 +109,11 @@ class DefaultAddSpecComponent(
             branches = emptyList(),
             branch = "",
             isBranchesLoading = value.isNotBlank(),
-            branchesStatusMessage = if (value.isBlank()) BRANCHES_REPOSITORY_HINT else BRANCHES_LOADING_HINT,
+            branchesStatusMessage = if (value.isBlank()) {
+                appText(AppTextKey.AddSpecStatusSelectRepository)
+            } else {
+                appText(AppTextKey.AddSpecStatusBranchesLoading)
+            },
             branchesStatusIsError = false,
         ).recomputeCanSubmit()
         loadBranches()
@@ -125,12 +137,16 @@ class DefaultAddSpecComponent(
             repositories = emptyList(),
             repositoryUrl = "",
             isRepositoriesLoading = value.isNotBlank(),
-            repositoriesStatusMessage = if (value.isBlank()) REPOSITORIES_TOKEN_HINT else REPOSITORIES_LOADING_HINT,
+            repositoriesStatusMessage = if (value.isBlank()) {
+                appText(AppTextKey.AddSpecStatusTokenHint)
+            } else {
+                appText(AppTextKey.AddSpecStatusRepositoriesLoading)
+            },
             repositoriesStatusIsError = false,
             branches = emptyList(),
             branch = "",
             isBranchesLoading = false,
-            branchesStatusMessage = BRANCHES_REPOSITORY_HINT,
+            branchesStatusMessage = appText(AppTextKey.AddSpecStatusSelectRepository),
             branchesStatusIsError = false,
         ).recomputeCanSubmit()
         loadRepositories()
@@ -161,7 +177,7 @@ class DefaultAddSpecComponent(
                 _state.value = _state.value
                     .copy(
                         isLoading = false,
-                        errorMessage = e.message ?: "Не удалось добавить спецификацию",
+                        errorMessage = e.toAppText(AppTextKey.ErrorAddSpecFailed),
                     )
                     .recomputeCanSubmit(clearError = false)
             }
@@ -173,7 +189,7 @@ class DefaultAddSpecComponent(
         if (token.isEmpty()) {
             _state.value = _state.value.copy(
                 isRepositoriesLoading = false,
-                repositoriesStatusMessage = REPOSITORIES_TOKEN_HINT,
+                repositoriesStatusMessage = appText(AppTextKey.AddSpecStatusTokenHint),
                 repositoriesStatusIsError = false,
             ).recomputeCanSubmit()
             return
@@ -186,7 +202,11 @@ class DefaultAddSpecComponent(
                 _state.value = _state.value.copy(
                     repositories = repositories,
                     isRepositoriesLoading = false,
-                    repositoriesStatusMessage = if (repositories.isEmpty()) REPOSITORIES_EMPTY_HINT else null,
+                    repositoriesStatusMessage = if (repositories.isEmpty()) {
+                        appText(AppTextKey.AddSpecStatusRepositoriesEmpty)
+                    } else {
+                        null
+                    },
                     repositoriesStatusIsError = false,
                 ).recomputeCanSubmit(clearError = false)
             } catch (e: CancellationException) {
@@ -196,9 +216,9 @@ class DefaultAddSpecComponent(
                     repositories = emptyList(),
                     repositoryUrl = "",
                     isRepositoriesLoading = false,
-                    repositoriesStatusMessage = e.message ?: "Не удалось загрузить репозитории",
+                    repositoriesStatusMessage = e.toAppText(AppTextKey.ErrorRepositoriesLoadFailed),
                     repositoriesStatusIsError = true,
-                    branchesStatusMessage = BRANCHES_REPOSITORY_HINT,
+                    branchesStatusMessage = appText(AppTextKey.AddSpecStatusSelectRepository),
                     branchesStatusIsError = false,
                 ).recomputeCanSubmit(clearError = false)
             }
@@ -212,7 +232,7 @@ class DefaultAddSpecComponent(
         if (token.isEmpty() || repository.isEmpty()) {
             _state.value = _state.value.copy(
                 isBranchesLoading = false,
-                branchesStatusMessage = BRANCHES_REPOSITORY_HINT,
+                branchesStatusMessage = appText(AppTextKey.AddSpecStatusSelectRepository),
                 branchesStatusIsError = false,
             ).recomputeCanSubmit()
             return
@@ -220,7 +240,7 @@ class DefaultAddSpecComponent(
 
         _state.value = _state.value.copy(
             isBranchesLoading = true,
-            branchesStatusMessage = BRANCHES_LOADING_HINT,
+            branchesStatusMessage = appText(AppTextKey.AddSpecStatusBranchesLoading),
             branchesStatusIsError = false,
         ).recomputeCanSubmit()
         val defaultBranch = state.repositories.firstOrNull { it.fullName == repository }?.defaultBranch
@@ -232,7 +252,11 @@ class DefaultAddSpecComponent(
                     branches = sortedBranches,
                     branch = sortedBranches.firstOrNull().orEmpty(),
                     isBranchesLoading = false,
-                    branchesStatusMessage = if (sortedBranches.isEmpty()) BRANCHES_EMPTY_HINT else null,
+                    branchesStatusMessage = if (sortedBranches.isEmpty()) {
+                        appText(AppTextKey.AddSpecStatusBranchesEmpty)
+                    } else {
+                        null
+                    },
                     branchesStatusIsError = false,
                 ).recomputeCanSubmit(clearError = false)
             } catch (e: CancellationException) {
@@ -242,7 +266,7 @@ class DefaultAddSpecComponent(
                     branches = emptyList(),
                     branch = "",
                     isBranchesLoading = false,
-                    branchesStatusMessage = e.message ?: "Не удалось загрузить ветки",
+                    branchesStatusMessage = e.toAppText(AppTextKey.ErrorBranchesLoadFailed),
                     branchesStatusIsError = true,
                 ).recomputeCanSubmit(clearError = false)
             }
@@ -298,9 +322,3 @@ class DefaultAddSpecComponent(
 }
 
 private const val GITHUB_TOKEN_URL = "https://github.com/settings/personal-access-tokens/new?name=SpecInspect+import+token&description=Read+repository+list%2C+branches%2C+and+spec+files+for+SpecInspect&expires_in=30&contents=read"
-private const val REPOSITORIES_TOKEN_HINT = "Введите user access token, чтобы загрузить репозитории"
-private const val REPOSITORIES_LOADING_HINT = "Загружаем список репозиториев..."
-private const val REPOSITORIES_EMPTY_HINT = "У токена нет доступных репозиториев"
-private const val BRANCHES_REPOSITORY_HINT = "Выберите репозиторий, чтобы загрузить ветки"
-private const val BRANCHES_LOADING_HINT = "Загружаем список веток..."
-private const val BRANCHES_EMPTY_HINT = "В репозитории не найдено веток"

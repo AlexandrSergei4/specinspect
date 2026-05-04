@@ -1,6 +1,7 @@
 package com.alki.specinspect.features.requirement
 
 import com.alki.specinspect.data.models.Requirement
+import com.alki.specinspect.data.models.ReviewReportStrings
 import com.alki.specinspect.data.models.ReviewStats
 import com.alki.specinspect.data.models.ReviewStatus
 import com.alki.specinspect.data.models.Scenario
@@ -31,7 +32,13 @@ interface RequirementDetailComponent {
     val state: StateFlow<RequirementDetailState>
     fun onBack()
     fun onStartReview()
-    fun onShareReport(includeCorrect: Boolean, includeIncorrect: Boolean)
+    fun onShareReport(
+        includeCorrect: Boolean,
+        includeIncorrect: Boolean,
+        shareTitle: String,
+        reportStrings: ReviewReportStrings,
+        specificationName: String,
+    )
     fun onFilter(filter: StatsFilter)
     fun onSetStatus(scenarioId: String, status: ReviewStatus)
     fun onOpenSource(url: String)
@@ -49,7 +56,9 @@ data class ScenarioCardState(
 )
 
 data class RequirementDetailState(
-    val breadcrumb: String = "",
+    val specName: String = "",
+    val isDemoSpec: Boolean = false,
+    val subspecName: String = "",
     val title: String = "",
     val description: String = "",
     val stats: ReviewStats = ReviewStats(0, 0, 0),
@@ -106,7 +115,9 @@ class DefaultRequirementDetailComponent(
             rebuiltCards.keepCurrentOrder(current.scenarios)
         }
         _state.value = RequirementDetailState(
-            breadcrumb = "${spec.name} / ${sub.name}",
+            specName = spec.name,
+            isDemoSpec = spec.isDemo,
+            subspecName = sub.name,
             title = req.title,
             description = req.description,
             stats = req.stats(statusOf),
@@ -127,7 +138,13 @@ class DefaultRequirementDetailComponent(
 
     override fun onBack() = onBackCallback()
     override fun onStartReview() = onStartReviewCallback(specId, subspecId, requirementId)
-    override fun onShareReport(includeCorrect: Boolean, includeIncorrect: Boolean) {
+    override fun onShareReport(
+        includeCorrect: Boolean,
+        includeIncorrect: Boolean,
+        shareTitle: String,
+        reportStrings: ReviewReportStrings,
+        specificationName: String,
+    ) {
         val spec = specRepo.getById(specId) ?: return
         val report = spec.buildReviewReport(
             statusOf = reviewRepo.snapshotStatusOf(),
@@ -135,9 +152,11 @@ class DefaultRequirementDetailComponent(
             requirementId = requirementId,
             includeCorrect = includeCorrect,
             includeIncorrect = includeIncorrect,
+            strings = reportStrings,
+            specificationName = specificationName,
         )
         scope.launch {
-            ImageSharing.shareText(report, "Поделиться отчётом")
+            ImageSharing.shareText(report, shareTitle)
         }
     }
     override fun onFilter(filter: StatsFilter) {

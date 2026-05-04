@@ -1,6 +1,7 @@
 package com.alki.specinspect.features.subspec
 
 import com.alki.specinspect.data.models.Requirement
+import com.alki.specinspect.data.models.ReviewReportStrings
 import com.alki.specinspect.data.models.ReviewStats
 import com.alki.specinspect.data.models.ReviewStatus
 import com.alki.specinspect.data.models.Scenario
@@ -34,7 +35,13 @@ interface SubspecDetailComponent {
     val state: StateFlow<SubspecDetailState>
     fun onBack()
     fun onStartReview()
-    fun onShareReport(includeCorrect: Boolean, includeIncorrect: Boolean)
+    fun onShareReport(
+        includeCorrect: Boolean,
+        includeIncorrect: Boolean,
+        shareTitle: String,
+        reportStrings: ReviewReportStrings,
+        specificationName: String,
+    )
     fun onFilter(filter: StatsFilter)
     fun onListModeChange(mode: SubspecListMode)
     fun onOpenRequirement(requirementId: String)
@@ -69,6 +76,7 @@ data class SubspecScenarioCardState(
 
 data class SubspecDetailState(
     val specName: String = "",
+    val isDemoSpec: Boolean = false,
     val subspecName: String = "",
     val requirementStats: ReviewStats = ReviewStats(0, 0, 0),
     val scenarioStats: ReviewStats = ReviewStats(0, 0, 0),
@@ -144,6 +152,7 @@ class DefaultSubspecDetailComponent(
         val scenarioStats = sub.scenarioStats(statusOf)
         _state.value = SubspecDetailState(
             specName = spec.name,
+            isDemoSpec = spec.isDemo,
             subspecName = sub.name,
             requirementStats = sub.requirementStats(statusOf),
             scenarioStats = scenarioStats,
@@ -176,16 +185,24 @@ class DefaultSubspecDetailComponent(
 
     override fun onBack() = onBackCallback()
     override fun onStartReview() = onStartReviewCallback(specId, subspecId)
-    override fun onShareReport(includeCorrect: Boolean, includeIncorrect: Boolean) {
+    override fun onShareReport(
+        includeCorrect: Boolean,
+        includeIncorrect: Boolean,
+        shareTitle: String,
+        reportStrings: ReviewReportStrings,
+        specificationName: String,
+    ) {
         val spec = specRepo.getById(specId) ?: return
         val report = spec.buildReviewReport(
             statusOf = reviewRepo.snapshotStatusOf(),
             subspecId = subspecId,
             includeCorrect = includeCorrect,
             includeIncorrect = includeIncorrect,
+            strings = reportStrings,
+            specificationName = specificationName,
         )
         scope.launch {
-            ImageSharing.shareText(report, "Поделиться отчётом")
+            ImageSharing.shareText(report, shareTitle)
         }
     }
     override fun onFilter(filter: StatsFilter) {

@@ -38,7 +38,10 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.alki.specinspect.ui.theme.AppColors
 import com.alki.specinspect.ui.theme.SampleTheme
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import specinspect.composeapp.generated.resources.Res
+import specinspect.composeapp.generated.resources.add_spec_loading
 import kotlin.math.PI
 import kotlin.math.sin
 
@@ -197,7 +200,7 @@ private fun PrimaryButtonShimmerPreview() {
                 .padding(16.dp),
         ) {
             PrimaryButton(
-                text = "Добавляем...",
+                text = stringResource(Res.string.add_spec_loading),
                 onClick = {},
                 enabled = false,
                 isShimmering = true,

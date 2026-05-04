@@ -4,6 +4,8 @@ import android.content.Context
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
+import com.alki.specinspect.localization.AppTextKey
+import com.alki.specinspect.localization.localizedError
 import java.security.KeyStore
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
@@ -41,7 +43,7 @@ class AndroidUserAccessTokenSecureStorage(
 
     private fun decrypt(encryptedToken: String): String {
         val combined = Base64.decode(encryptedToken, Base64.NO_WRAP)
-        require(combined.size > IV_SIZE) { "Некорректные данные токена" }
+        if (combined.size <= IV_SIZE) localizedError(AppTextKey.ErrorInvalidTokenData)
 
         val iv = combined.copyOfRange(0, IV_SIZE)
         val encrypted = combined.copyOfRange(IV_SIZE, combined.size)

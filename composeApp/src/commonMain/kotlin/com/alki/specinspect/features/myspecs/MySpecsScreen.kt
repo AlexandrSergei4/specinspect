@@ -37,6 +37,18 @@ import compose.icons.tablericons.PlayerPlay
 import compose.icons.tablericons.Plus
 import compose.icons.tablericons.Trash
 import compose.icons.tablericons.Upload
+import org.jetbrains.compose.resources.stringResource
+import specinspect.composeapp.generated.resources.Res
+import specinspect.composeapp.generated.resources.action_delete
+import specinspect.composeapp.generated.resources.action_open
+import specinspect.composeapp.generated.resources.badge_demo
+import specinspect.composeapp.generated.resources.count_requirements
+import specinspect.composeapp.generated.resources.count_specifications
+import specinspect.composeapp.generated.resources.demo_specification_name
+import specinspect.composeapp.generated.resources.my_specs_add
+import specinspect.composeapp.generated.resources.my_specs_empty
+import specinspect.composeapp.generated.resources.my_specs_loaded
+import specinspect.composeapp.generated.resources.my_specs_title
 
 @Composable
 fun MySpecsScreen(component: MySpecsComponent) {
@@ -54,23 +66,23 @@ fun MySpecsScreen(component: MySpecsComponent) {
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
             item {
-                AppTopBar(title = "Мои спецификации", onBack = component::onBack)
+                AppTopBar(title = stringResource(Res.string.my_specs_title), onBack = component::onBack)
             }
             item {
                 DashedButton(
-                    text = "Добавить спецификации",
+                    text = stringResource(Res.string.my_specs_add),
                     onClick = component::onAdd,
                     leadingIcon = TablerIcons.Upload,
                 )
             }
             item {
-                SectionHeader("Загруженные спецификации")
+                SectionHeader(stringResource(Res.string.my_specs_loaded))
             }
             if (state.items.isEmpty()) {
                 item {
                     WhiteCard {
                         Text(
-                            "Список пуст. Нажмите «Добавить спецификации», чтобы загрузить первую.",
+                            stringResource(Res.string.my_specs_empty),
                             style = MaterialTheme.typography.bodyMedium,
                             color = AppColors.GreyViolet,
                         )
@@ -80,6 +92,7 @@ fun MySpecsScreen(component: MySpecsComponent) {
             items(state.items, key = { it.id }) { item ->
                 SpecCard(
                     item = item,
+                    displayName = if (item.isDemo) stringResource(Res.string.demo_specification_name) else item.name,
                     onOpen = { component.onOpen(item.id) },
                     onDelete = { component.onDelete(item.id) },
                 )
@@ -91,6 +104,7 @@ fun MySpecsScreen(component: MySpecsComponent) {
 @Composable
 private fun SpecCard(
     item: SpecListItem,
+    displayName: String,
     onOpen: () -> Unit,
     onDelete: () -> Unit,
 ) {
@@ -102,25 +116,25 @@ private fun SpecCard(
             Column(modifier = Modifier.weight(1f)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        item.name,
+                        displayName,
                         style = MaterialTheme.typography.titleLarge,
                         color = AppColors.Dark,
                     )
                     if (item.isDemo) {
                         Spacer(Modifier.width(8.dp))
-                        YellowPillBadge("Демо")
+                        YellowPillBadge(stringResource(Res.string.badge_demo))
                     }
                 }
                 Spacer(Modifier.height(4.dp))
                 Row {
                     Text(
-                        "${item.subspecCount} спецификаций",
+                        stringResource(Res.string.count_specifications, item.subspecCount),
                         style = MaterialTheme.typography.bodySmall,
                         color = AppColors.GreyViolet,
                     )
                     Spacer(Modifier.width(16.dp))
                     Text(
-                        "${item.requirementCount} требований",
+                        stringResource(Res.string.count_requirements, item.requirementCount),
                         style = MaterialTheme.typography.bodySmall,
                         color = AppColors.GreyViolet,
                     )
@@ -132,7 +146,7 @@ private fun SpecCard(
                 onClick = onOpen,
                 background = AppColors.Dark,
                 iconTint = AppColors.Light,
-                contentDescription = "Открыть",
+                contentDescription = stringResource(Res.string.action_open),
             )
             Spacer(Modifier.width(8.dp))
             IconChip(
@@ -140,9 +154,8 @@ private fun SpecCard(
                 onClick = onDelete,
                 background = AppColors.GreyVioletSurface,
                 iconTint = AppColors.GreyViolet,
-                contentDescription = "Удалить",
+                contentDescription = stringResource(Res.string.action_delete),
             )
         }
     }
 }
-

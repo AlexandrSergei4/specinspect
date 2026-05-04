@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">OpenSpec Review</string>
+    <string name="demo_specification_name">demo specification</string>
+
+    <string name="action_back">Back</string>
+    <string name="action_open">Open</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_share">Share</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_open_github_source">Open source on GitHub</string>
+    <string name="action_start_review">Start review</string>
+
+    <string name="onboarding_description">Review specifications as cards. Swipe right for correct requirements and left for requirements with issues.</string>
+    <string name="onboarding_start_demo">Start with demo specification</string>
+    <string name="onboarding_open_my_specs">Go to my specifications</string>
+    <string name="onboarding_how_it_works">How it works</string>
+    <string name="onboarding_bullet_review_requirements">Review requirements and scenarios</string>
+    <string name="onboarding_bullet_swipe_correct">Swipe right when a requirement is correct</string>
+    <string name="onboarding_bullet_swipe_incorrect">Swipe left when there are issues</string>
+    <string name="onboarding_bullet_stats">Track specification statistics</string>
+    <string name="bullet_symbol">•</string>
+
+    <string name="my_specs_title">My specifications</string>
+    <string name="my_specs_add">Add specifications</string>
+    <string name="my_specs_loaded">Loaded specifications</string>
+    <string name="my_specs_empty">The list is empty. Tap “Add specifications” to load the first one.</string>
+    <string name="badge_demo">Demo</string>
+
+    <string name="add_spec_title">Add specification</string>
+    <string name="add_spec_repository_label">Repository</string>
+    <string name="add_spec_repository_placeholder">Select repository</string>
+    <string name="add_spec_branch_label">Branch</string>
+    <string name="add_spec_branch_placeholder">Select branch</string>
+    <string name="add_spec_path_label">Specification path</string>
+    <string name="add_spec_path_placeholder">openspec/specs or .specify/specs</string>
+    <string name="add_spec_import_title">How import works</string>
+    <string name="add_spec_import_body">The app calls the GitHub REST Contents API, uses a user access token, walks the selected folder, and imports every found `spec.md` as a separate subspecification. OpenSpec and spec-kit formats are supported.</string>
+    <string name="add_spec_import_body_2">The repository list loads right after you enter a token, and branches load after you select a repository.</string>
+    <string name="add_spec_import_paths">openspec/\n└─ specs/\n   └─ dashboard/spec.md\n\n.specify/\n└─ specs/\n   └─ auth-flow/spec.md</string>
+    <string name="add_spec_name_label">Specification name</string>
+    <string name="add_spec_name_placeholder">Repository name</string>
+    <string name="add_spec_loading">Adding...</string>
+    <string name="add_spec_submit">Add specification</string>
+    <string name="add_spec_token_label">User access token</string>
+    <string name="add_spec_token_placeholder">ghu_...</string>
+    <string name="add_spec_generate_token">Generate</string>
+    <string name="add_spec_status_token_hint">Enter a user access token to load repositories</string>
+    <string name="add_spec_status_repositories_loading">Loading repositories...</string>
+    <string name="add_spec_status_repositories_empty">The token has no available repositories</string>
+    <string name="add_spec_status_select_repository">Select a repository to load branches</string>
+    <string name="add_spec_status_branches_loading">Loading branches...</string>
+    <string name="add_spec_status_branches_empty">No branches were found in the repository</string>
+
+    <string name="stats_overview">Overall statistics</string>
+    <string name="stats_scenarios">Scenario statistics</string>
+    <string name="stats_correct">Correct</string>
+    <string name="stats_incorrect">Incorrect</string>
+    <string name="stats_unreviewed">Unreviewed</string>
+    <string name="section_specs">Specifications</string>
+    <string name="section_requirements">Requirements</string>
+    <string name="section_scenarios">Scenarios</string>
+    <string name="section_dropdown_option_format">%1$s (%2$d)</string>
+    <string name="section_scenarios_count">Scenarios (%1$d)</string>
+    <string name="label_specification">SPECIFICATION</string>
+    <string name="label_requirement">REQUIREMENT</string>
+    <string name="label_scenario">SCENARIO %1$d</string>
+    <string name="label_when">WHEN</string>
+    <string name="label_then">THEN</string>
+    <string name="label_review_requirement">REQUIREMENT</string>
+    <string name="requirement_title">Requirement</string>
+    <string name="review_all_scenarios_done">All scenarios reviewed.</string>
+
+    <string name="count_specifications">%1$d specifications</string>
+    <string name="count_requirements">%1$d requirements</string>
+    <string name="count_requirements_scenarios">%1$d requirements • %2$d scenarios</string>
+    <string name="count_scenarios_reviewed">%1$d scenarios • %2$d%% reviewed</string>
+    <string name="review_progress_format">%1$d / %2$d</string>
+    <string name="breadcrumb_format">%1$s / %2$s</string>
+    <string name="last_reviewed_format">Last reviewed: %1$s</string>
+
+    <string name="status_incorrect">Incorrect</string>
+    <string name="status_correct">Correct</string>
+    <string name="status_unreviewed">Unreviewed</string>
+
+    <string name="report_options_title">What to include in the report</string>
+    <string name="report_include_incorrect">Incorrect</string>
+    <string name="report_include_correct">Correct</string>
+    <string name="share_report_title">Share report</string>
+    <string name="report_title">Review report</string>
+    <string name="report_specification_format">Specification: %1$s</string>
+    <string name="report_evaluated_count_format">Reviewed scenarios: %1$d</string>
+    <string name="report_empty">There are no reviewed scenarios yet.</string>
+    <string name="report_subspec_format">Subspec: %1$s</string>
+    <string name="report_requirement_format">  Requirement: %1$s</string>
+    <string name="report_description_format">  Description: %1$s</string>
+    <string name="report_scenario_format">    - %1$s %2$s: %3$s</string>
+    <string name="report_when_format">      WHEN: %1$s</string>
+    <string name="report_then_format">      THEN: %1$s</string>
+    <string name="report_source_format">      Source: %1$s</string>
+    <string name="report_marker_correct">✅</string>
+    <string name="report_marker_incorrect">❌</string>
+    <string name="report_marker_unreviewed"></string>
+
+    <string name="error_spec_name_required">Enter a specification name</string>
+    <string name="error_no_spec_files">No spec.md files were found at the selected path</string>
+    <string name="error_subspec_name_missing">Could not determine the subspecification name</string>
+    <string name="error_openspec_requirement_parse_failed">Could not parse Requirement in %1$s/spec.md</string>
+    <string name="error_spec_kit_or_requirement_parse_failed">Could not parse spec-kit use cases or Requirement in %1$s/spec.md</string>
+    <string name="error_token_required">Enter a user access token</string>
+    <string name="error_branch_required">Select a branch</string>
+    <string name="error_github_unexpected_directory_response">GitHub returned an unexpected response for directory %1$s</string>
+    <string name="error_github_token_or_access">Check the user access token and repository access</string>
+    <string name="error_github_not_found">Could not find the repository, branch, or specification path</string>
+    <string name="error_github_api">GitHub API returned error %1$s</string>
+    <string name="error_github_repository_required">Enter a GitHub repository</string>
+    <string name="error_github_only_supported">Only GitHub repositories are supported</string>
+    <string name="error_github_repository_format_required">Enter a GitHub repository as owner/repo or a github.com URL</string>
+    <string name="error_specification_path_required">Enter the specification path</string>
+    <string name="error_add_spec_failed">Could not add the specification</string>
+    <string name="error_repositories_load_failed">Could not load repositories</string>
+    <string name="error_branches_load_failed">Could not load branches</string>
+    <string name="error_import_unsupported">Specification import is not configured on this platform</string>
+    <string name="error_invalid_token_data">Invalid token data</string>
+</resources>

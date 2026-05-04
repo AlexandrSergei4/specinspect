@@ -28,12 +28,30 @@ import com.alki.specinspect.ui.components.StatsBlocks
 import com.alki.specinspect.ui.components.StatsCardHeader
 import com.alki.specinspect.ui.components.WhiteCard
 import com.alki.specinspect.ui.theme.AppColors
+import com.alki.specinspect.localization.reviewReportStrings
 import compose.icons.TablerIcons
 import compose.icons.tablericons.PlayerPlay
+import org.jetbrains.compose.resources.stringResource
+import specinspect.composeapp.generated.resources.Res
+import specinspect.composeapp.generated.resources.action_start_review
+import specinspect.composeapp.generated.resources.breadcrumb_format
+import specinspect.composeapp.generated.resources.demo_specification_name
+import specinspect.composeapp.generated.resources.label_scenario
+import specinspect.composeapp.generated.resources.requirement_title
+import specinspect.composeapp.generated.resources.section_scenarios_count
+import specinspect.composeapp.generated.resources.share_report_title
+import specinspect.composeapp.generated.resources.stats_scenarios
 
 @Composable
 fun RequirementDetailScreen(component: RequirementDetailComponent) {
     val state by component.state.collectAsState()
+    val specDisplayName = if (state.isDemoSpec) {
+        stringResource(Res.string.demo_specification_name)
+    } else {
+        state.specName
+    }
+    val reportStrings = reviewReportStrings()
+    val shareReportTitle = stringResource(Res.string.share_report_title)
 
     Box(
         modifier = Modifier
@@ -48,8 +66,8 @@ fun RequirementDetailScreen(component: RequirementDetailComponent) {
         ) {
             item {
                 AppTopBar(
-                    title = "Requirement",
-                    subtitle = state.breadcrumb,
+                    title = stringResource(Res.string.requirement_title),
+                    subtitle = stringResource(Res.string.breadcrumb_format, specDisplayName, state.subspecName),
                     onBack = component::onBack,
                 )
             }
@@ -69,8 +87,16 @@ fun RequirementDetailScreen(component: RequirementDetailComponent) {
             item {
                 WhiteCard {
                     StatsCardHeader(
-                        text = "Статистика сценариев",
-                        onShare = component::onShareReport,
+                        text = stringResource(Res.string.stats_scenarios),
+                        onShare = { includeCorrect, includeIncorrect ->
+                            component.onShareReport(
+                                includeCorrect = includeCorrect,
+                                includeIncorrect = includeIncorrect,
+                                shareTitle = shareReportTitle,
+                                reportStrings = reportStrings,
+                                specificationName = specDisplayName,
+                            )
+                        },
                     )
                     Spacer(Modifier.height(16.dp))
                     StatsBlocks(
@@ -80,7 +106,7 @@ fun RequirementDetailScreen(component: RequirementDetailComponent) {
                     )
                     Spacer(Modifier.height(16.dp))
                     PrimaryButton(
-                        text = "Начать ревью",
+                        text = stringResource(Res.string.action_start_review),
                         onClick = component::onStartReview,
                         leadingIcon = TablerIcons.PlayerPlay,
                         height = 48,
@@ -89,11 +115,11 @@ fun RequirementDetailScreen(component: RequirementDetailComponent) {
                 }
             }
             item {
-                SectionHeader("Сценарии (${state.visibleScenarios.size})")
+                SectionHeader(stringResource(Res.string.section_scenarios_count, state.visibleScenarios.size))
             }
             items(state.visibleScenarios, key = { it.id }) { sc ->
                 ScenarioReviewCard(
-                    label = "СЦЕНАРИЙ ${sc.index}",
+                    label = stringResource(Res.string.label_scenario, sc.index),
                     title = sc.title,
                     whenText = sc.whenText,
                     thenText = sc.thenText,

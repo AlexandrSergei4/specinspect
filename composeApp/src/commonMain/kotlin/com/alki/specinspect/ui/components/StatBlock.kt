@@ -31,6 +31,11 @@ import compose.icons.TablerIcons
 import compose.icons.tablericons.Check
 import compose.icons.tablericons.Circle
 import compose.icons.tablericons.X
+import org.jetbrains.compose.resources.stringResource
+import specinspect.composeapp.generated.resources.Res
+import specinspect.composeapp.generated.resources.stats_correct
+import specinspect.composeapp.generated.resources.stats_incorrect
+import specinspect.composeapp.generated.resources.stats_unreviewed
 
 private data class StatStyle(
     val accent: Color,
@@ -59,7 +64,7 @@ fun StatsBlocks(
     ) {
         StatBlock(
             count = stats.correct,
-            label = "Корректные",
+            label = stringResource(Res.string.stats_correct),
             style = correctStyle,
             isSelected = selected == StatsFilter.CORRECT,
             onClick = { onFilter(if (selected == StatsFilter.CORRECT) StatsFilter.ALL else StatsFilter.CORRECT) },
@@ -68,7 +73,7 @@ fun StatsBlocks(
         )
         StatBlock(
             count = stats.incorrect,
-            label = "Некорректные",
+            label = stringResource(Res.string.stats_incorrect),
             style = incorrectStyle,
             isSelected = selected == StatsFilter.INCORRECT,
             onClick = { onFilter(if (selected == StatsFilter.INCORRECT) StatsFilter.ALL else StatsFilter.INCORRECT) },
@@ -77,7 +82,7 @@ fun StatsBlocks(
         )
         StatBlock(
             count = stats.unreviewed,
-            label = "Неоценённые",
+            label = stringResource(Res.string.stats_unreviewed),
             style = unreviewedStyle,
             isSelected = selected == StatsFilter.UNREVIEWED,
             onClick = { onFilter(if (selected == StatsFilter.UNREVIEWED) StatsFilter.ALL else StatsFilter.UNREVIEWED) },

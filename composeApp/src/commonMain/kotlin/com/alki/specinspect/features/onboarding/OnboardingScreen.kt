@@ -35,6 +35,18 @@ import compose.icons.TablerIcons
 import compose.icons.tablericons.FileText
 import compose.icons.tablericons.Folder
 import compose.icons.tablericons.PlayerPlay
+import org.jetbrains.compose.resources.stringResource
+import specinspect.composeapp.generated.resources.Res
+import specinspect.composeapp.generated.resources.app_name
+import specinspect.composeapp.generated.resources.bullet_symbol
+import specinspect.composeapp.generated.resources.onboarding_bullet_review_requirements
+import specinspect.composeapp.generated.resources.onboarding_bullet_stats
+import specinspect.composeapp.generated.resources.onboarding_bullet_swipe_correct
+import specinspect.composeapp.generated.resources.onboarding_bullet_swipe_incorrect
+import specinspect.composeapp.generated.resources.onboarding_description
+import specinspect.composeapp.generated.resources.onboarding_how_it_works
+import specinspect.composeapp.generated.resources.onboarding_open_my_specs
+import specinspect.composeapp.generated.resources.onboarding_start_demo
 
 @Composable
 fun OnboardingScreen(component: OnboardingComponent) {
@@ -69,14 +81,14 @@ fun OnboardingScreen(component: OnboardingComponent) {
             Spacer(Modifier.height(32.dp))
 
             Text(
-                text = "OpenSpec Review",
+                text = stringResource(Res.string.app_name),
                 style = MaterialTheme.typography.displayMedium,
                 color = AppColors.Dark,
                 textAlign = TextAlign.Center,
             )
             Spacer(Modifier.height(12.dp))
             Text(
-                text = "Ревью спецификаций в формате карточек. Свайпайте вправо для корректных требований и влево для некорректных.",
+                text = stringResource(Res.string.onboarding_description),
                 style = MaterialTheme.typography.bodyMedium,
                 color = AppColors.GreyViolet,
                 textAlign = TextAlign.Center,
@@ -84,13 +96,13 @@ fun OnboardingScreen(component: OnboardingComponent) {
             Spacer(Modifier.height(40.dp))
 
             PrimaryButton(
-                text = "Начать с демо-спецификацией",
+                text = stringResource(Res.string.onboarding_start_demo),
                 onClick = component::onStartDemo,
                 leadingIcon = TablerIcons.PlayerPlay,
             )
             Spacer(Modifier.height(12.dp))
             SecondaryButton(
-                text = "Перейти к моим спецификациям",
+                text = stringResource(Res.string.onboarding_open_my_specs),
                 onClick = component::onOpenMySpecifications,
                 leadingIcon = TablerIcons.Folder,
             )
@@ -98,15 +110,15 @@ fun OnboardingScreen(component: OnboardingComponent) {
 
             WhiteCard {
                 Text(
-                    text = "Как это работает?",
+                    text = stringResource(Res.string.onboarding_how_it_works),
                     style = MaterialTheme.typography.titleSmall,
                     color = AppColors.Dark,
                 )
                 Spacer(Modifier.height(12.dp))
-                BulletLine("Просматривайте требования и сценарии")
-                BulletLine("Свайпайте вправо если требование корректное")
-                BulletLine("Свайпайте влево если есть проблемы")
-                BulletLine("Изучайте статистику по спецификациям")
+                BulletLine(stringResource(Res.string.onboarding_bullet_review_requirements))
+                BulletLine(stringResource(Res.string.onboarding_bullet_swipe_correct))
+                BulletLine(stringResource(Res.string.onboarding_bullet_swipe_incorrect))
+                BulletLine(stringResource(Res.string.onboarding_bullet_stats))
             }
         }
     }
@@ -115,7 +127,11 @@ fun OnboardingScreen(component: OnboardingComponent) {
 @Composable
 private fun BulletLine(text: String) {
     Row(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
-        Text("•", color = AppColors.GreyViolet.copy(alpha = 0.5f), style = MaterialTheme.typography.bodySmall)
+        Text(
+            stringResource(Res.string.bullet_symbol),
+            color = AppColors.GreyViolet.copy(alpha = 0.5f),
+            style = MaterialTheme.typography.bodySmall,
+        )
         Spacer(Modifier.size(8.dp))
         Text(text, style = MaterialTheme.typography.bodySmall, color = AppColors.GreyViolet)
     }

@@ -1,6 +1,7 @@
 package com.alki.specinspect.features.spec
 
 import com.alki.specinspect.data.models.ReviewStats
+import com.alki.specinspect.data.models.ReviewReportStrings
 import com.alki.specinspect.data.models.ReviewStatus
 import com.alki.specinspect.data.models.Scenario
 import com.alki.specinspect.data.models.Specification
@@ -34,7 +35,13 @@ interface SpecDetailComponent {
     val state: StateFlow<SpecDetailState>
     fun onBack()
     fun onStartReview()
-    fun onShareReport(includeCorrect: Boolean, includeIncorrect: Boolean)
+    fun onShareReport(
+        includeCorrect: Boolean,
+        includeIncorrect: Boolean,
+        shareTitle: String,
+        reportStrings: ReviewReportStrings,
+        specificationName: String,
+    )
     fun onFilter(filter: StatsFilter)
     fun onListModeChange(mode: SpecListMode)
     fun onOpenSubspec(subspecId: String)
@@ -79,11 +86,13 @@ data class SpecScenarioCardState(
     val lastReviewedAt: Long?,
     val status: ReviewStatus,
     val sourceUrl: String?,
-    val contextLabel: String,
+    val contextSubspecName: String,
+    val contextRequirementTitle: String,
 )
 
 data class SpecDetailState(
     val specName: String = "",
+    val isDemoSpec: Boolean = false,
     val subspecCount: Int = 0,
     val subspecStats: ReviewStats = ReviewStats(0, 0, 0),
     val scenarioStats: ReviewStats = ReviewStats(0, 0, 0),
@@ -172,7 +181,8 @@ class DefaultSpecDetailComponent(
                             lastReviewedAt = reviewRepo.scenarioReviewedAt(sc.id),
                             status = statusOf(sc),
                             sourceUrl = spec.gitHubUrlFor(sc),
-                            contextLabel = "${sub.name} / ${req.title}",
+                            contextSubspecName = sub.name,
+                            contextRequirementTitle = req.title,
                         )
                     }
                 }
@@ -182,6 +192,7 @@ class DefaultSpecDetailComponent(
         val scenarioStats = spec.scenarioStats(statusOf)
         _state.value = SpecDetailState(
             specName = spec.name,
+            isDemoSpec = spec.isDemo,
             subspecCount = spec.subspecs.size,
             subspecStats = spec.subspecStats(statusOf),
             scenarioStats = scenarioStats,
@@ -222,15 +233,23 @@ class DefaultSpecDetailComponent(
 
     override fun onBack() = onBackCallback()
     override fun onStartReview() = onStartReviewCallback(specId)
-    override fun onShareReport(includeCorrect: Boolean, includeIncorrect: Boolean) {
+    override fun onShareReport(
+        includeCorrect: Boolean,
+        includeIncorrect: Boolean,
+        shareTitle: String,
+        reportStrings: ReviewReportStrings,
+        specificationName: String,
+    ) {
         val spec = specRepo.getById(specId) ?: return
         val report = spec.buildReviewReport(
             statusOf = reviewRepo.snapshotStatusOf(),
             includeCorrect = includeCorrect,
             includeIncorrect = includeIncorrect,
+            strings = reportStrings,
+            specificationName = specificationName,
         )
         scope.launch {
-            ImageSharing.shareText(report, "Поделиться отчётом")
+            ImageSharing.shareText(report, shareTitle)
         }
     }
     override fun onFilter(filter: StatsFilter) {

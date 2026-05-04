@@ -45,8 +45,30 @@ import com.alki.specinspect.ui.components.PrimaryButton
 import com.alki.specinspect.ui.components.TintedCard
 import com.alki.specinspect.ui.components.WhiteCard
 import com.alki.specinspect.ui.theme.AppColors
+import com.alki.specinspect.localization.AppText
+import com.alki.specinspect.localization.resolve
 import compose.icons.TablerIcons
 import compose.icons.tablericons.ChevronDown
+import org.jetbrains.compose.resources.stringResource
+import specinspect.composeapp.generated.resources.Res
+import specinspect.composeapp.generated.resources.add_spec_branch_label
+import specinspect.composeapp.generated.resources.add_spec_branch_placeholder
+import specinspect.composeapp.generated.resources.add_spec_generate_token
+import specinspect.composeapp.generated.resources.add_spec_import_body
+import specinspect.composeapp.generated.resources.add_spec_import_body_2
+import specinspect.composeapp.generated.resources.add_spec_import_paths
+import specinspect.composeapp.generated.resources.add_spec_import_title
+import specinspect.composeapp.generated.resources.add_spec_loading
+import specinspect.composeapp.generated.resources.add_spec_name_label
+import specinspect.composeapp.generated.resources.add_spec_name_placeholder
+import specinspect.composeapp.generated.resources.add_spec_path_label
+import specinspect.composeapp.generated.resources.add_spec_path_placeholder
+import specinspect.composeapp.generated.resources.add_spec_repository_label
+import specinspect.composeapp.generated.resources.add_spec_repository_placeholder
+import specinspect.composeapp.generated.resources.add_spec_submit
+import specinspect.composeapp.generated.resources.add_spec_title
+import specinspect.composeapp.generated.resources.add_spec_token_label
+import specinspect.composeapp.generated.resources.add_spec_token_placeholder
 
 @Composable
 fun AddSpecScreen(component: AddSpecComponent) {
@@ -65,7 +87,7 @@ fun AddSpecScreen(component: AddSpecComponent) {
                 .padding(start = 24.dp, end = 24.dp, top = 24.dp, bottom = 32.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
-            AppTopBar(title = "Добавить спецификацию", onBack = component::onBack)
+            AppTopBar(title = stringResource(Res.string.add_spec_title), onBack = component::onBack)
 
             WhiteCard {
                 TokenField(
@@ -77,8 +99,8 @@ fun AddSpecScreen(component: AddSpecComponent) {
 
             WhiteCard {
                 DropdownField(
-                    label = "Репозиторий",
-                    placeholder = "Выберите репозиторий",
+                    label = stringResource(Res.string.add_spec_repository_label),
+                    placeholder = stringResource(Res.string.add_spec_repository_placeholder),
                     value = state.repositoryUrl,
                     options = state.repositories.map { it.fullName },
                     enabled = state.repositories.isNotEmpty() && !state.isRepositoriesLoading,
@@ -90,8 +112,8 @@ fun AddSpecScreen(component: AddSpecComponent) {
 
             WhiteCard {
                 DropdownField(
-                    label = "Ветка",
-                    placeholder = "Выберите ветку",
+                    label = stringResource(Res.string.add_spec_branch_label),
+                    placeholder = stringResource(Res.string.add_spec_branch_placeholder),
                     value = state.branch,
                     options = state.branches,
                     enabled = state.branches.isNotEmpty() && !state.isBranchesLoading,
@@ -103,8 +125,8 @@ fun AddSpecScreen(component: AddSpecComponent) {
 
             WhiteCard {
                 LabeledField(
-                    label = "Путь до спецификации",
-                    placeholder = "openspec/specs or .specify/specs",
+                    label = stringResource(Res.string.add_spec_path_label),
+                    placeholder = stringResource(Res.string.add_spec_path_placeholder),
                     value = state.specificationPath,
                     onValueChange = component::onSpecificationPathChanged,
                 )
@@ -115,17 +137,20 @@ fun AddSpecScreen(component: AddSpecComponent) {
                 border = AppColors.TealBorder,
                 padding = PaddingValues(20.dp),
             ) {
-                Text("Как работает импорт", style = MaterialTheme.typography.titleSmall, color = AppColors.Dark)
+                Text(
+                    stringResource(Res.string.add_spec_import_title),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = AppColors.Dark,
+                )
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    "Приложение обращается к GitHub REST Contents API, использует user access token, обходит указанную папку " +
-                        "и загружает каждый найденный `spec.md` как отдельную подспецификацию. Сейчас поддерживаются форматы OpenSpec и spec-kit.",
+                    stringResource(Res.string.add_spec_import_body),
                     style = MaterialTheme.typography.bodySmall,
                     color = AppColors.GreyViolet,
                 )
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    "Список репозиториев подтягивается сразу после ввода токена, а список веток - после выбора репозитория.",
+                    stringResource(Res.string.add_spec_import_body_2),
                     style = MaterialTheme.typography.bodySmall,
                     color = AppColors.GreyViolet,
                 )
@@ -138,7 +163,7 @@ fun AddSpecScreen(component: AddSpecComponent) {
                         .padding(12.dp),
                 ) {
                     Text(
-                        text = "openspec/\n└─ specs/\n   └─ dashboard/spec.md\n\n.specify/\n└─ specs/\n   └─ auth-flow/spec.md",
+                        text = stringResource(Res.string.add_spec_import_paths),
                         style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace),
                         color = AppColors.Dark,
                     )
@@ -147,8 +172,8 @@ fun AddSpecScreen(component: AddSpecComponent) {
 
             WhiteCard {
                 LabeledField(
-                    label = "Название спецификации",
-                    placeholder = "Имя репозитория",
+                    label = stringResource(Res.string.add_spec_name_label),
+                    placeholder = stringResource(Res.string.add_spec_name_placeholder),
                     value = state.name,
                     onValueChange = component::onNameChanged,
                 )
@@ -156,14 +181,18 @@ fun AddSpecScreen(component: AddSpecComponent) {
 
             if (state.errorMessage != null) {
                 Text(
-                    state.errorMessage!!,
+                    state.errorMessage!!.resolve(),
                     style = MaterialTheme.typography.bodyMedium,
                     color = AppColors.Coral,
                 )
             }
 
             PrimaryButton(
-                text = if (state.isLoading) "Добавляем..." else "Добавить спецификацию",
+                text = if (state.isLoading) {
+                    stringResource(Res.string.add_spec_loading)
+                } else {
+                    stringResource(Res.string.add_spec_submit)
+                },
                 onClick = component::onSubmit,
                 enabled = state.canSubmit,
                 isShimmering = state.isLoading,
@@ -179,7 +208,11 @@ private fun TokenField(
     onGenerateClick: () -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
-        Text("User access token", style = MaterialTheme.typography.titleSmall, color = AppColors.Dark)
+        Text(
+            stringResource(Res.string.add_spec_token_label),
+            style = MaterialTheme.typography.titleSmall,
+            color = AppColors.Dark,
+        )
         Spacer(Modifier.height(8.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Box(modifier = Modifier.weight(1f)) {
@@ -195,7 +228,7 @@ private fun TokenField(
                         decorationBox = { inner ->
                             if (value.isEmpty()) {
                                 Text(
-                                    "ghu_...",
+                                    stringResource(Res.string.add_spec_token_placeholder),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = AppColors.Dark.copy(alpha = 0.5f),
                                 )
@@ -223,7 +256,11 @@ private fun GenerateButton(onClick: () -> Unit) {
             .clickable { onClick() },
         contentAlignment = Alignment.Center,
     ) {
-        Text("Generate", style = MaterialTheme.typography.titleSmall, color = AppColors.Dark)
+        Text(
+            stringResource(Res.string.add_spec_generate_token),
+            style = MaterialTheme.typography.titleSmall,
+            color = AppColors.Dark,
+        )
     }
 }
 
@@ -234,7 +271,7 @@ private fun DropdownField(
     value: String,
     options: List<String>,
     enabled: Boolean,
-    supportingText: String? = null,
+    supportingText: AppText? = null,
     supportingTextIsError: Boolean = false,
     onValueChange: (String) -> Unit,
 ) {
@@ -283,7 +320,7 @@ private fun DropdownField(
         if (supportingText != null) {
             Spacer(Modifier.height(8.dp))
             Text(
-                supportingText,
+                supportingText.resolve(),
                 style = MaterialTheme.typography.bodySmall,
                 color = if (supportingTextIsError) AppColors.Coral else AppColors.GreyViolet,
             )

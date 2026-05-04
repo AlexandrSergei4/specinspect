@@ -6,6 +6,8 @@ fun Specification.buildReviewReport(
     requirementId: String? = null,
     includeCorrect: Boolean = false,
     includeIncorrect: Boolean = true,
+    strings: ReviewReportStrings,
+    specificationName: String = name,
 ): String {
     val scopedSubspecs = subspecs
         .filter { sub -> subspecId == null || sub.id == subspecId }
@@ -21,13 +23,13 @@ fun Specification.buildReviewReport(
     }
 
     return buildString {
-        appendLine("Отчёт ревью")
-        appendLine("Спецификация: $name")
-        appendLine("Оценённых сценариев: $evaluatedCount")
+        appendLine(strings.title)
+        appendLine(strings.specification(specificationName))
+        appendLine(strings.evaluatedCount(evaluatedCount))
 
         if (evaluatedCount == 0) {
             appendLine()
-            appendLine("Оценённых сценариев пока нет.")
+            appendLine(strings.empty)
             return@buildString
         }
 
@@ -38,20 +40,20 @@ fun Specification.buildReviewReport(
             if (evaluatedRequirements.isEmpty()) return@forEach
 
             appendLine()
-            appendLine("Подспека: ${sub.name}")
+            appendLine(strings.subspec(sub.name))
             evaluatedRequirements.forEach { req ->
-                appendLine("  Требование: ${req.title}")
+                appendLine(strings.requirement(req.title))
                 if (req.description.isNotBlank()) {
-                    appendLine("  Описание: ${req.description}")
+                    appendLine(strings.description(req.description))
                 }
                 req.scenarios.forEach { sc ->
                     val status = statusOf(sc)
                     if (status.isIncluded(includeCorrect, includeIncorrect)) {
-                        appendLine("    - ${status.reportMarker} ${status.reportLabel}: ${sc.title}")
-                        appendLine("      WHEN: ${sc.whenText}")
-                        appendLine("      THEN: ${sc.thenText}")
+                        appendLine(strings.scenario(strings.statusMarker(status), strings.statusLabel(status), sc.title))
+                        appendLine(strings.whenText(sc.whenText))
+                        appendLine(strings.thenText(sc.thenText))
                         gitHubUrlFor(sc)?.let { url ->
-                            appendLine("      Источник: $url")
+                            appendLine(strings.source(url))
                         }
                     }
                 }
@@ -67,16 +69,49 @@ private fun ReviewStatus.isIncluded(includeCorrect: Boolean, includeIncorrect: B
         ReviewStatus.UNREVIEWED -> false
     }
 
-private val ReviewStatus.reportMarker: String
-    get() = when (this) {
-        ReviewStatus.CORRECT -> "✅"
-        ReviewStatus.INCORRECT -> "❌"
-        ReviewStatus.UNREVIEWED -> ""
+data class ReviewReportStrings(
+    val title: String,
+    val specificationFormat: String,
+    val evaluatedCountFormat: String,
+    val empty: String,
+    val subspecFormat: String,
+    val requirementFormat: String,
+    val descriptionFormat: String,
+    val scenarioFormat: String,
+    val whenFormat: String,
+    val thenFormat: String,
+    val sourceFormat: String,
+    val correctMarker: String,
+    val incorrectMarker: String,
+    val unreviewedMarker: String,
+    val correctStatus: String,
+    val incorrectStatus: String,
+    val unreviewedStatus: String,
+) {
+    fun specification(value: String): String = specificationFormat.replace("%1\$s", value)
+    fun evaluatedCount(value: Int): String = evaluatedCountFormat.replace("%1\$d", value.toString())
+    fun subspec(value: String): String = subspecFormat.replace("%1\$s", value)
+    fun requirement(value: String): String = requirementFormat.replace("%1\$s", value)
+    fun description(value: String): String = descriptionFormat.replace("%1\$s", value)
+    fun scenario(marker: String, status: String, title: String): String =
+        scenarioFormat
+            .replace("%1\$s", marker)
+            .replace("%2\$s", status)
+            .replace("%3\$s", title)
+
+    fun whenText(value: String): String = whenFormat.replace("%1\$s", value)
+    fun thenText(value: String): String = thenFormat.replace("%1\$s", value)
+    fun source(value: String): String = sourceFormat.replace("%1\$s", value)
+
+    fun statusLabel(status: ReviewStatus): String = when (status) {
+        ReviewStatus.CORRECT -> correctStatus
+        ReviewStatus.INCORRECT -> incorrectStatus
+        ReviewStatus.UNREVIEWED -> unreviewedStatus
     }
 
-private val ReviewStatus.reportLabel: String
-    get() = when (this) {
-        ReviewStatus.CORRECT -> "Корректный"
-        ReviewStatus.INCORRECT -> "Некорректный"
-        ReviewStatus.UNREVIEWED -> "Неоценённый"
+    fun statusMarker(status: ReviewStatus): String = when (status) {
+        ReviewStatus.CORRECT -> correctMarker
+        ReviewStatus.INCORRECT -> incorrectMarker
+        ReviewStatus.UNREVIEWED -> unreviewedMarker
     }
+}

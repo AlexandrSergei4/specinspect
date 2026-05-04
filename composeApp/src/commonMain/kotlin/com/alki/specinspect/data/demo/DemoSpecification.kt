@@ -9,7 +9,7 @@ import com.alki.specinspect.data.openspec.OpenSpecParser
  */
 object DemoSpecification {
     const val ID = "demo-spec"
-    const val NAME = "демо-спецификация"
+    const val NAME = ID
 
     fun build(): Specification {
         val subspecs = listOf(

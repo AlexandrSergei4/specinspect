@@ -37,13 +37,32 @@ import com.alki.specinspect.ui.components.StatsCardHeader
 import com.alki.specinspect.ui.components.StatsRow
 import com.alki.specinspect.ui.components.WhiteCard
 import com.alki.specinspect.ui.theme.AppColors
+import com.alki.specinspect.localization.reviewReportStrings
 import compose.icons.TablerIcons
 import compose.icons.tablericons.ChevronRight
 import compose.icons.tablericons.PlayerPlay
+import org.jetbrains.compose.resources.stringResource
+import specinspect.composeapp.generated.resources.Res
+import specinspect.composeapp.generated.resources.action_start_review
+import specinspect.composeapp.generated.resources.count_scenarios_reviewed
+import specinspect.composeapp.generated.resources.demo_specification_name
+import specinspect.composeapp.generated.resources.label_scenario
+import specinspect.composeapp.generated.resources.section_dropdown_option_format
+import specinspect.composeapp.generated.resources.section_requirements
+import specinspect.composeapp.generated.resources.section_scenarios
+import specinspect.composeapp.generated.resources.share_report_title
+import specinspect.composeapp.generated.resources.stats_overview
 
 @Composable
 fun SubspecDetailScreen(component: SubspecDetailComponent) {
     val state by component.state.collectAsState()
+    val specDisplayName = if (state.isDemoSpec) {
+        stringResource(Res.string.demo_specification_name)
+    } else {
+        state.specName
+    }
+    val reportStrings = reviewReportStrings()
+    val shareReportTitle = stringResource(Res.string.share_report_title)
 
     Box(
         modifier = Modifier
@@ -59,15 +78,23 @@ fun SubspecDetailScreen(component: SubspecDetailComponent) {
             item {
                 AppTopBar(
                     title = state.subspecName,
-                    subtitle = state.specName,
+                    subtitle = specDisplayName,
                     onBack = component::onBack,
                 )
             }
             item {
                 WhiteCard {
                     StatsCardHeader(
-                        text = "Общая статистика",
-                        onShare = component::onShareReport,
+                        text = stringResource(Res.string.stats_overview),
+                        onShare = { includeCorrect, includeIncorrect ->
+                            component.onShareReport(
+                                includeCorrect = includeCorrect,
+                                includeIncorrect = includeIncorrect,
+                                shareTitle = shareReportTitle,
+                                reportStrings = reportStrings,
+                                specificationName = specDisplayName,
+                            )
+                        },
                     )
                     Spacer(Modifier.height(16.dp))
                     StatsBlocks(
@@ -77,7 +104,7 @@ fun SubspecDetailScreen(component: SubspecDetailComponent) {
                     )
                     Spacer(Modifier.height(16.dp))
                     PrimaryButton(
-                        text = "Начать ревью",
+                        text = stringResource(Res.string.action_start_review),
                         onClick = component::onStartReview,
                         leadingIcon = TablerIcons.PlayerPlay,
                         height = 48,
@@ -89,8 +116,22 @@ fun SubspecDetailScreen(component: SubspecDetailComponent) {
                 SectionDropdown(
                     selected = state.listMode,
                     options = listOf(
-                        SectionDropdownOption(SubspecListMode.REQUIREMENTS, "Требования", state.visibleRequirements.size),
-                        SectionDropdownOption(SubspecListMode.SCENARIOS, "Сценарии", state.visibleScenarios.size),
+                        SectionDropdownOption(
+                            SubspecListMode.REQUIREMENTS,
+                            stringResource(
+                                Res.string.section_dropdown_option_format,
+                                stringResource(Res.string.section_requirements),
+                                state.visibleRequirements.size,
+                            ),
+                        ),
+                        SectionDropdownOption(
+                            SubspecListMode.SCENARIOS,
+                            stringResource(
+                                Res.string.section_dropdown_option_format,
+                                stringResource(Res.string.section_scenarios),
+                                state.visibleScenarios.size,
+                            ),
+                        ),
                     ),
                     onSelected = component::onListModeChange,
                 )
@@ -107,7 +148,7 @@ fun SubspecDetailScreen(component: SubspecDetailComponent) {
                 SubspecListMode.SCENARIOS -> {
                     items(state.visibleScenarios, key = { it.id }) { sc ->
                         ScenarioReviewCard(
-                            label = "СЦЕНАРИЙ ${sc.index}",
+                            label = stringResource(Res.string.label_scenario, sc.index),
                             title = sc.title,
                             whenText = sc.whenText,
                             thenText = sc.thenText,
@@ -161,7 +202,11 @@ private fun RequirementCard(card: RequirementCardState, onClick: () -> Unit) {
         ReviewProgressBar(stats = card.scenarioStats)
         Spacer(Modifier.height(8.dp))
         Text(
-            "${card.scenarioCount} сценариев • ${(card.scenarioStats.reviewedFraction * 100).toInt()}% просмотрено",
+            stringResource(
+                Res.string.count_scenarios_reviewed,
+                card.scenarioCount,
+                (card.scenarioStats.reviewedFraction * 100).toInt(),
+            ),
             style = MaterialTheme.typography.bodySmall,
             color = AppColors.GreyViolet,
         )

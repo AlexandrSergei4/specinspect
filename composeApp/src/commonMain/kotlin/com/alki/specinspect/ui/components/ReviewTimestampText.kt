@@ -7,6 +7,9 @@ import androidx.compose.ui.Modifier
 import com.alki.specinspect.ui.theme.AppColors
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.stringResource
+import specinspect.composeapp.generated.resources.Res
+import specinspect.composeapp.generated.resources.last_reviewed_format
 import kotlin.time.Instant
 
 @Composable
@@ -16,7 +19,7 @@ fun ReviewTimestampText(
 ) {
     if (timestamp == null) return
     Text(
-        text = "Последняя оценка: ${formatReviewTimestamp(timestamp)}",
+        text = stringResource(Res.string.last_reviewed_format, formatReviewTimestamp(timestamp)),
         style = MaterialTheme.typography.bodySmall,
         color = AppColors.GreyViolet,
         modifier = modifier,

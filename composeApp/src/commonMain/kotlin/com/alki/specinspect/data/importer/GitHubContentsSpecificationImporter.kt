@@ -1,5 +1,7 @@
 package com.alki.specinspect.data.importer
 
+import com.alki.specinspect.localization.AppTextKey
+import com.alki.specinspect.localization.localizedError
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.header
@@ -26,7 +28,7 @@ class GitHubContentsSpecificationImporter(
 
     override suspend fun loadRepositories(userAccessToken: String): List<AvailableGitRepository> {
         val token = userAccessToken.trim()
-        if (token.isEmpty()) error("Укажите user access token")
+        if (token.isEmpty()) localizedError(AppTextKey.ErrorTokenRequired)
         repositoriesCache[token]?.let { return it }
 
         val repositories = loadPagedArray { page ->
@@ -52,7 +54,7 @@ class GitHubContentsSpecificationImporter(
 
     override suspend fun loadBranches(repositoryUrl: String, userAccessToken: String): List<String> {
         val token = userAccessToken.trim()
-        if (token.isEmpty()) error("Укажите user access token")
+        if (token.isEmpty()) localizedError(AppTextKey.ErrorTokenRequired)
 
         val repository = parseGitHubRepository(repositoryUrl)
         val cacheKey = BranchesCacheKey(token = token, repository = repository.owner + "/" + repository.repo)
@@ -78,8 +80,8 @@ class GitHubContentsSpecificationImporter(
         val specificationPath = normalizeSpecificationPath(request.specificationPath)
         val token = request.userAccessToken.trim()
 
-        if (branch.isEmpty()) error("Укажите ветку")
-        if (token.isEmpty()) error("Укажите user access token")
+        if (branch.isEmpty()) localizedError(AppTextKey.ErrorBranchRequired)
+        if (token.isEmpty()) localizedError(AppTextKey.ErrorTokenRequired)
 
         return collectSpecFiles(
             repository = repository,
@@ -148,7 +150,8 @@ class GitHubContentsSpecificationImporter(
         val body = response.bodyAsText()
         ensureSuccess(response.status, body)
         val payload = json.parseToJsonElement(body).jsonObject
-        val entries = payload["entries"]?.jsonArray ?: error("GitHub вернул неожиданный ответ для каталога $directoryPath")
+        val entries = payload["entries"]?.jsonArray
+            ?: localizedError(AppTextKey.ErrorGitHubUnexpectedDirectoryResponse, directoryPath)
         return entries.map { element ->
             element.jsonObject.toContentEntry()
         }
@@ -209,9 +212,9 @@ class GitHubContentsSpecificationImporter(
         val apiMessage = parseApiMessage(body)
         val message = when (status) {
             HttpStatusCode.Unauthorized,
-            HttpStatusCode.Forbidden -> "Проверьте user access token и доступ к репозиторию"
-            HttpStatusCode.NotFound -> "Не удалось найти репозиторий, ветку или путь до спецификации"
-            else -> apiMessage ?: "GitHub API вернул ошибку ${status.value}"
+            HttpStatusCode.Forbidden -> localizedError(AppTextKey.ErrorGitHubTokenOrAccess)
+            HttpStatusCode.NotFound -> localizedError(AppTextKey.ErrorGitHubNotFound)
+            else -> apiMessage ?: localizedError(AppTextKey.ErrorGitHubApi, status.value.toString())
         }
         throw IllegalStateException(message)
     }
@@ -252,9 +255,9 @@ private data class BranchesCacheKey(
 
 internal fun parseGitHubRepository(repositoryUrl: String): GitHubRepositoryId {
     val value = repositoryUrl.trim()
-    if (value.isEmpty()) error("Укажите GitHub репозиторий")
+    if (value.isEmpty()) localizedError(AppTextKey.ErrorGitHubRepositoryRequired)
     if ((value.contains("://") || value.startsWith("git@")) && !value.contains("github.com")) {
-        error("Поддерживаются только репозитории GitHub")
+        localizedError(AppTextKey.ErrorGitHubOnlySupported)
     }
 
     val normalized = when {
@@ -272,7 +275,7 @@ internal fun parseGitHubRepository(repositoryUrl: String): GitHubRepositoryId {
         .filter { it.isNotBlank() }
 
     if (parts.size < 2) {
-        error("Укажите GitHub репозиторий в формате owner/repo или ссылку на github.com")
+        localizedError(AppTextKey.ErrorGitHubRepositoryFormatRequired)
     }
 
     return GitHubRepositoryId(
@@ -283,7 +286,7 @@ internal fun parseGitHubRepository(repositoryUrl: String): GitHubRepositoryId {
 
 internal fun normalizeSpecificationPath(specificationPath: String): String {
     val normalized = normalizeGitHubPath(specificationPath)
-    if (normalized.isEmpty()) error("Укажите путь до спецификации")
+    if (normalized.isEmpty()) localizedError(AppTextKey.ErrorSpecificationPathRequired)
     return if (normalized.endsWith("spec.md")) normalized.substringBeforeLast("/", "") else normalized
 }
 

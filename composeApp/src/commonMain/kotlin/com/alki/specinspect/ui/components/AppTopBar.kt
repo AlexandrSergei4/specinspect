@@ -22,6 +22,9 @@ import androidx.compose.ui.unit.dp
 import com.alki.specinspect.ui.theme.AppColors
 import compose.icons.TablerIcons
 import compose.icons.tablericons.ChevronLeft
+import org.jetbrains.compose.resources.stringResource
+import specinspect.composeapp.generated.resources.Res
+import specinspect.composeapp.generated.resources.action_back
 
 @Composable
 fun AppTopBar(
@@ -45,7 +48,7 @@ fun AppTopBar(
             ) {
                 Icon(
                     imageVector = TablerIcons.ChevronLeft,
-                    contentDescription = "Назад",
+                    contentDescription = stringResource(Res.string.action_back),
                     tint = AppColors.Dark,
                     modifier = Modifier.size(22.dp),
                 )
