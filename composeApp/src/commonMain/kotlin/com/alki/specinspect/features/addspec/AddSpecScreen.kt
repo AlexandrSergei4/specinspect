@@ -166,6 +166,7 @@ fun AddSpecScreen(component: AddSpecComponent) {
                 text = if (state.isLoading) "Добавляем..." else "Добавить спецификацию",
                 onClick = component::onSubmit,
                 enabled = state.canSubmit,
+                isShimmering = state.isLoading,
             )
         }
     }
