@@ -27,7 +27,10 @@ import com.alki.specinspect.features.spec.DefaultSpecDetailComponent
 import com.alki.specinspect.features.spec.SpecDetailComponent
 import com.alki.specinspect.features.subspec.DefaultSubspecDetailComponent
 import com.alki.specinspect.features.subspec.SubspecDetailComponent
+import com.alki.specinspect.features.webcontent.DefaultWebContentComponent
+import com.alki.specinspect.features.webcontent.WebContentComponent
 import com.alki.specinspect.ui.theme.AppThemeMode
+import com.alki.specinspect.util.UrlOpener
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
@@ -86,6 +89,25 @@ class RootComponent(
                 componentContext = context,
                 themeMode = themeMode,
                 onThemeModeSelectedCallback = ::setThemeMode,
+                onContactDeveloperCallback = {
+                    UrlOpener.openUrl("mailto:paslenapp@gmail.com?subject=SpecInspect%20feedback")
+                },
+                onOpenPrivacyPolicyCallback = {
+                    navigation.pushNew(
+                        Config.WebContent(
+                            title = "Privacy Policy",
+                            url = "https://paslenstudio.github.io/SpecInspect_Policy.html",
+                        )
+                    )
+                },
+                onBackCallback = { navigation.pop() },
+            )
+        )
+        is Config.WebContent -> Child.WebContent(
+            DefaultWebContentComponent(
+                componentContext = context,
+                title = config.title,
+                url = config.url,
                 onBackCallback = { navigation.pop() },
             )
         )
@@ -173,6 +195,7 @@ class RootComponent(
         @Serializable data object Onboarding : Config()
         @Serializable data object MySpecs : Config()
         @Serializable data object Settings : Config()
+        @Serializable data class WebContent(val title: String, val url: String) : Config()
         @Serializable data class SpecDetail(val specId: String) : Config()
         @Serializable data class SubspecDetail(val specId: String, val subspecId: String) : Config()
         @Serializable data class RequirementDetail(
@@ -188,6 +211,7 @@ class RootComponent(
         data class Onboarding(val component: OnboardingComponent) : Child()
         data class MySpecs(val component: MySpecsComponent) : Child()
         data class Settings(val component: SettingsComponent) : Child()
+        data class WebContent(val component: WebContentComponent) : Child()
         data class SpecDetail(val component: SpecDetailComponent) : Child()
         data class SubspecDetail(val component: SubspecDetailComponent) : Child()
         data class RequirementDetail(val component: RequirementDetailComponent) : Child()

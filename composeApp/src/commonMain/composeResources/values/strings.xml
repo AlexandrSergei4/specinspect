@@ -29,10 +29,14 @@
     <string name="badge_demo">Демо</string>
 
     <string name="settings_title">Настройки</string>
-    <string name="settings_theme_title">Тема</string>
+    <string name="settings_theme_title">Тема оформления</string>
     <string name="settings_theme_auto">Авто</string>
     <string name="settings_theme_light">Светлая</string>
     <string name="settings_theme_dark">Темная</string>
+    <string name="settings_auto_description">Тема будет автоматически меняться в зависимости от системных настроек устройства.</string>
+    <string name="settings_info_title">Информация</string>
+    <string name="settings_info_contact_developer">Связаться с разработчиком</string>
+    <string name="settings_info_privacy_policy">Privacy Policy</string>
 
     <string name="add_spec_title">Добавить спецификацию</string>
     <string name="add_spec_source_personal">Personal</string>

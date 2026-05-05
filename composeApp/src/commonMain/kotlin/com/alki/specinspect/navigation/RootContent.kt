@@ -13,6 +13,7 @@ import com.alki.specinspect.features.review.ScenarioReviewScreen
 import com.alki.specinspect.features.settings.SettingsScreen
 import com.alki.specinspect.features.spec.SpecDetailScreen
 import com.alki.specinspect.features.subspec.SubspecDetailScreen
+import com.alki.specinspect.features.webcontent.WebContentScreen
 import com.alki.specinspect.ui.theme.SampleTheme
 import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.arkivanov.decompose.extensions.compose.stack.animation.fade
@@ -37,6 +38,7 @@ fun RootContent(
                 is RootComponent.Child.Onboarding -> OnboardingScreen(instance.component)
                 is RootComponent.Child.MySpecs -> MySpecsScreen(instance.component)
                 is RootComponent.Child.Settings -> SettingsScreen(instance.component)
+                is RootComponent.Child.WebContent -> WebContentScreen(instance.component)
                 is RootComponent.Child.SpecDetail -> SpecDetailScreen(instance.component)
                 is RootComponent.Child.SubspecDetail -> SubspecDetailScreen(instance.component)
                 is RootComponent.Child.RequirementDetail -> RequirementDetailScreen(instance.component)

@@ -29,10 +29,14 @@
     <string name="badge_demo">Demo</string>
 
     <string name="settings_title">Settings</string>
-    <string name="settings_theme_title">Theme</string>
+    <string name="settings_theme_title">Appearance theme</string>
     <string name="settings_theme_auto">Auto</string>
     <string name="settings_theme_light">Light</string>
     <string name="settings_theme_dark">Dark</string>
+    <string name="settings_auto_description">The theme will automatically change based on the device system settings.</string>
+    <string name="settings_info_title">Information</string>
+    <string name="settings_info_contact_developer">Contact developer</string>
+    <string name="settings_info_privacy_policy">Privacy Policy</string>
 
     <string name="add_spec_title">Add specification</string>
     <string name="add_spec_source_personal">Personal</string>
