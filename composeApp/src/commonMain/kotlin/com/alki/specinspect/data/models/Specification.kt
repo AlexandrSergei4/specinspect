@@ -27,13 +27,36 @@ data class GitSource(
  * Сценарий внутри Requirement
  */
 @Serializable
+enum class ScenarioStepKeyword {
+    GIVEN,
+    WHEN,
+    THEN,
+    AND,
+}
+
+@Serializable
+data class ScenarioStep(
+    val keyword: ScenarioStepKeyword,
+    val text: String,
+)
+
+@Serializable
 data class Scenario(
     val id: String,
     val title: String,
     val whenText: String,
     val thenText: String,
     val source: ScenarioSource? = null,
+    val steps: List<ScenarioStep> = emptyList(),
 )
+
+fun Scenario.displaySteps(): List<ScenarioStep> =
+    steps.ifEmpty {
+        buildList {
+            if (whenText.isNotBlank()) add(ScenarioStep(ScenarioStepKeyword.WHEN, whenText))
+            if (thenText.isNotBlank()) add(ScenarioStep(ScenarioStepKeyword.THEN, thenText))
+        }
+    }
 
 /**
  * Requirement внутри Subspec

@@ -44,8 +44,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.alki.specinspect.data.models.ReviewStatus
 import com.alki.specinspect.ui.components.IconChip
-import com.alki.specinspect.ui.components.ThenBlock
-import com.alki.specinspect.ui.components.WhenBlock
+import com.alki.specinspect.ui.components.ScenarioStepBlocks
 import com.alki.specinspect.ui.theme.AppColors
 import compose.icons.TablerIcons
 import compose.icons.tablericons.ArrowBackUp
@@ -280,8 +279,11 @@ private fun SwipeCard(
                         .padding(horizontal = 24.dp, vertical = 24.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
-                    WhenBlock(card.whenText)
-                    ThenBlock(card.thenText)
+                    ScenarioStepBlocks(
+                        steps = card.steps,
+                        fallbackWhenText = card.whenText,
+                        fallbackThenText = card.thenText,
+                    )
                 }
                 Column(
                     modifier = Modifier

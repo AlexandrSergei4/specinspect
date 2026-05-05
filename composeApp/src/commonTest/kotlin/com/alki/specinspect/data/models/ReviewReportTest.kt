@@ -82,6 +82,52 @@ class ReviewReportTest {
         assertFalse(report.contains("Correct scenario"))
     }
 
+    @Test
+    fun reportIncludesOrderedScenarioStepsWhenPresent() {
+        val steppedScenario = Scenario(
+            id = "stepped",
+            title = "Stepped scenario",
+            whenText = "user opens the app",
+            thenText = "dashboard is shown",
+            steps = listOf(
+                ScenarioStep(ScenarioStepKeyword.GIVEN, "the user is signed in"),
+                ScenarioStep(ScenarioStepKeyword.WHEN, "user opens the app\nfrom a deep link"),
+                ScenarioStep(ScenarioStepKeyword.THEN, "dashboard is shown"),
+                ScenarioStep(ScenarioStepKeyword.AND, "latest data is refreshed"),
+            ),
+        )
+        val specification = Specification(
+            id = "spec",
+            name = "Demo spec",
+            isDemo = true,
+            subspecs = listOf(
+                Subspec(
+                    id = "sub",
+                    name = "dashboard",
+                    requirements = listOf(
+                        Requirement(
+                            id = "req",
+                            title = "Default dashboard",
+                            description = "",
+                            scenarios = listOf(steppedScenario),
+                        ),
+                    ),
+                ),
+            ),
+        )
+
+        val report = specification.buildReviewReport(
+            statusOf = { ReviewStatus.INCORRECT },
+            includeCorrect = false,
+            includeIncorrect = true,
+            strings = testReviewReportStrings,
+        )
+
+        assertContains(report, "GIVEN: the user is signed in")
+        assertContains(report, "WHEN: user opens the app\nfrom a deep link")
+        assertContains(report, "AND: latest data is refreshed")
+    }
+
     private fun scenario(id: String, title: String) = Scenario(
         id = id,
         title = title,

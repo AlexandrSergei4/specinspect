@@ -4,10 +4,12 @@ import com.alki.specinspect.data.models.ReviewStats
 import com.alki.specinspect.data.models.ReviewReportStrings
 import com.alki.specinspect.data.models.ReviewStatus
 import com.alki.specinspect.data.models.Scenario
+import com.alki.specinspect.data.models.ScenarioStep
 import com.alki.specinspect.data.models.Specification
 import com.alki.specinspect.data.models.StatsFilter
 import com.alki.specinspect.data.models.aggregatedStatus
 import com.alki.specinspect.data.models.buildReviewReport
+import com.alki.specinspect.data.models.displaySteps
 import com.alki.specinspect.data.models.gitHubUrlFor
 import com.alki.specinspect.data.models.requirementStats
 import com.alki.specinspect.data.models.scenarioStats
@@ -83,6 +85,7 @@ data class SpecScenarioCardState(
     val title: String,
     val whenText: String,
     val thenText: String,
+    val steps: List<ScenarioStep> = emptyList(),
     val lastReviewedAt: Long?,
     val status: ReviewStatus,
     val sourceUrl: String?,
@@ -178,6 +181,7 @@ class DefaultSpecDetailComponent(
                             title = sc.title,
                             whenText = sc.whenText,
                             thenText = sc.thenText,
+                            steps = sc.displaySteps(),
                             lastReviewedAt = reviewRepo.scenarioReviewedAt(sc.id),
                             status = statusOf(sc),
                             sourceUrl = spec.gitHubUrlFor(sc),

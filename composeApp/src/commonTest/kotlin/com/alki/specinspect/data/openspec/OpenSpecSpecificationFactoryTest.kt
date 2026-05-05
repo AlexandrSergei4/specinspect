@@ -1,6 +1,8 @@
 package com.alki.specinspect.data.openspec
 
 import com.alki.specinspect.data.importer.ImportedSpecFile
+import com.alki.specinspect.data.models.ScenarioStep
+import com.alki.specinspect.data.models.ScenarioStepKeyword
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -35,6 +37,54 @@ class OpenSpecSpecificationFactoryTest {
         assertFailsWith<IllegalStateException> {
             OpenSpecSpecificationFactory.create(name = "Demo Spec", files = emptyList())
         }
+    }
+
+    @Test
+    fun parsesMultilineScenarioStepsAndAndSections() {
+        val subspec = OpenSpecParser.parseSubspec(
+            name = "registration",
+            content = """
+                ## ADDED Requirements
+
+                ### Requirement: Registration flow
+                The system SHALL register invited users.
+
+                #### Scenario: Invited user signs up
+                - **GIVEN** the visitor has an invitation
+                - **WHEN** the visitor starts registration
+                  in order to create an account
+                  with team access
+                - **THEN** the account is created
+                  and the dashboard opens
+                - **AND** onboarding checklist is visible
+                  with the first item selected
+                - **AND** email notification is queued
+            """.trimIndent(),
+        )
+
+        val scenario = subspec.requirements.single().scenarios.single()
+
+        assertEquals(
+            "the visitor starts registration\nin order to create an account\nwith team access",
+            scenario.whenText,
+        )
+        assertEquals("the account is created\nand the dashboard opens", scenario.thenText)
+        assertEquals(
+            listOf(
+                ScenarioStep(ScenarioStepKeyword.GIVEN, "the visitor has an invitation"),
+                ScenarioStep(
+                    ScenarioStepKeyword.WHEN,
+                    "the visitor starts registration\nin order to create an account\nwith team access",
+                ),
+                ScenarioStep(ScenarioStepKeyword.THEN, "the account is created\nand the dashboard opens"),
+                ScenarioStep(
+                    ScenarioStepKeyword.AND,
+                    "onboarding checklist is visible\nwith the first item selected",
+                ),
+                ScenarioStep(ScenarioStepKeyword.AND, "email notification is queued"),
+            ),
+            scenario.steps,
+        )
     }
 
     private fun sampleSpec(

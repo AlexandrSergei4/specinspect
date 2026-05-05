@@ -50,8 +50,9 @@ fun Specification.buildReviewReport(
                     val status = statusOf(sc)
                     if (status.isIncluded(includeCorrect, includeIncorrect)) {
                         appendLine(strings.scenario(strings.statusMarker(status), strings.statusLabel(status), sc.title))
-                        appendLine(strings.whenText(sc.whenText))
-                        appendLine(strings.thenText(sc.thenText))
+                        sc.displaySteps().forEach { step ->
+                            appendLine(strings.stepText(step))
+                        }
                         gitHubUrlFor(sc)?.let { url ->
                             appendLine(strings.source(url))
                         }
@@ -78,8 +79,10 @@ data class ReviewReportStrings(
     val requirementFormat: String,
     val descriptionFormat: String,
     val scenarioFormat: String,
+    val givenFormat: String = "      GIVEN: %1\$s",
     val whenFormat: String,
     val thenFormat: String,
+    val andFormat: String = "      AND: %1\$s",
     val sourceFormat: String,
     val correctMarker: String,
     val incorrectMarker: String,
@@ -101,6 +104,14 @@ data class ReviewReportStrings(
 
     fun whenText(value: String): String = whenFormat.replace("%1\$s", value)
     fun thenText(value: String): String = thenFormat.replace("%1\$s", value)
+    fun givenText(value: String): String = givenFormat.replace("%1\$s", value)
+    fun andText(value: String): String = andFormat.replace("%1\$s", value)
+    fun stepText(step: ScenarioStep): String = when (step.keyword) {
+        ScenarioStepKeyword.GIVEN -> givenText(step.text)
+        ScenarioStepKeyword.WHEN -> whenText(step.text)
+        ScenarioStepKeyword.THEN -> thenText(step.text)
+        ScenarioStepKeyword.AND -> andText(step.text)
+    }
     fun source(value: String): String = sourceFormat.replace("%1\$s", value)
 
     fun statusLabel(status: ReviewStatus): String = when (status) {

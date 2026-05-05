@@ -7,6 +7,8 @@ import specinspect.composeapp.generated.resources.Res
 import specinspect.composeapp.generated.resources.report_description_format
 import specinspect.composeapp.generated.resources.report_empty
 import specinspect.composeapp.generated.resources.report_evaluated_count_format
+import specinspect.composeapp.generated.resources.report_and_format
+import specinspect.composeapp.generated.resources.report_given_format
 import specinspect.composeapp.generated.resources.report_marker_correct
 import specinspect.composeapp.generated.resources.report_marker_incorrect
 import specinspect.composeapp.generated.resources.report_marker_unreviewed
@@ -32,8 +34,10 @@ fun reviewReportStrings(): ReviewReportStrings = ReviewReportStrings(
     requirementFormat = stringResource(Res.string.report_requirement_format),
     descriptionFormat = stringResource(Res.string.report_description_format),
     scenarioFormat = stringResource(Res.string.report_scenario_format),
+    givenFormat = stringResource(Res.string.report_given_format),
     whenFormat = stringResource(Res.string.report_when_format),
     thenFormat = stringResource(Res.string.report_then_format),
+    andFormat = stringResource(Res.string.report_and_format),
     sourceFormat = stringResource(Res.string.report_source_format),
     correctMarker = stringResource(Res.string.report_marker_correct),
     incorrectMarker = stringResource(Res.string.report_marker_incorrect),

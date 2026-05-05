@@ -2,6 +2,8 @@ package com.alki.specinspect.features.review
 
 import com.alki.specinspect.data.models.ReviewStatus
 import com.alki.specinspect.data.models.Scenario
+import com.alki.specinspect.data.models.ScenarioStep
+import com.alki.specinspect.data.models.displaySteps
 import com.alki.specinspect.data.models.gitHubUrlFor
 import com.alki.specinspect.data.repository.ReviewRepository
 import com.alki.specinspect.data.repository.SpecificationRepository
@@ -42,6 +44,7 @@ data class ReviewCardState(
     val title: String,
     val whenText: String,
     val thenText: String,
+    val steps: List<ScenarioStep> = emptyList(),
     val requirementText: String,
     val sourcePath: String? = null,
     val sourceLine: Int? = null,
@@ -156,6 +159,7 @@ class DefaultScenarioReviewComponent(
                     title = source.scenario.title,
                     whenText = source.scenario.whenText,
                     thenText = source.scenario.thenText,
+                    steps = source.scenario.displaySteps(),
                     requirementText = source.requirementText,
                     sourcePath = source.scenario.source?.filePath,
                     sourceLine = source.scenario.source?.line,

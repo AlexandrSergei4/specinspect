@@ -123,6 +123,7 @@ fun RequirementDetailScreen(component: RequirementDetailComponent) {
                     title = sc.title,
                     whenText = sc.whenText,
                     thenText = sc.thenText,
+                    steps = sc.steps,
                     lastReviewedAt = sc.lastReviewedAt,
                     status = sc.status,
                     sourceUrl = sc.sourceUrl,

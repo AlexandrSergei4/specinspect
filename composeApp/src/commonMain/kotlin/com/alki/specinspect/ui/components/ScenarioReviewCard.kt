@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.alki.specinspect.data.models.ReviewStatus
+import com.alki.specinspect.data.models.ScenarioStep
 import com.alki.specinspect.ui.theme.AppColors
 import compose.icons.TablerIcons
 import compose.icons.tablericons.BrandGithub
@@ -42,6 +43,7 @@ fun ScenarioReviewCard(
     title: String,
     whenText: String,
     thenText: String,
+    steps: List<ScenarioStep> = emptyList(),
     lastReviewedAt: Long?,
     status: ReviewStatus,
     sourceUrl: String?,
@@ -93,9 +95,11 @@ fun ScenarioReviewCard(
         }
         ReviewTimestampText(lastReviewedAt, modifier = Modifier.padding(top = 4.dp))
         Spacer(Modifier.height(12.dp))
-        WhenBlock(whenText)
-        Spacer(Modifier.height(12.dp))
-        ThenBlock(thenText)
+        ScenarioStepBlocks(
+            steps = steps,
+            fallbackWhenText = whenText,
+            fallbackThenText = thenText,
+        )
         Spacer(Modifier.height(16.dp))
         StatusToggle(status, onSetStatus)
     }

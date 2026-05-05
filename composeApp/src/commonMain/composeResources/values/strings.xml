@@ -76,8 +76,10 @@
     <string name="label_specification">СПЕЦИФИКАЦИЯ</string>
     <string name="label_requirement">ТРЕБОВАНИЕ</string>
     <string name="label_scenario">СЦЕНАРИЙ %1$d</string>
+    <string name="label_given">GIVEN</string>
     <string name="label_when">WHEN</string>
     <string name="label_then">THEN</string>
+    <string name="label_and">AND</string>
     <string name="label_review_requirement">REQUIREMENT</string>
     <string name="requirement_title">Requirement</string>
     <string name="review_all_scenarios_done">Все сценарии просмотрены!</string>
@@ -106,8 +108,10 @@
     <string name="report_requirement_format">  Требование: %1$s</string>
     <string name="report_description_format">  Описание: %1$s</string>
     <string name="report_scenario_format">    - %1$s %2$s: %3$s</string>
+    <string name="report_given_format">      GIVEN: %1$s</string>
     <string name="report_when_format">      WHEN: %1$s</string>
     <string name="report_then_format">      THEN: %1$s</string>
+    <string name="report_and_format">      AND: %1$s</string>
     <string name="report_source_format">      Источник: %1$s</string>
     <string name="report_marker_correct">✅</string>
     <string name="report_marker_incorrect">❌</string>

@@ -33,6 +33,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.alki.specinspect.data.models.ScenarioStep
+import com.alki.specinspect.data.models.ScenarioStepKeyword
 import com.alki.specinspect.ui.theme.AppColors
 import compose.icons.TablerIcons
 import compose.icons.tablericons.ChevronDown
@@ -41,6 +43,8 @@ import org.jetbrains.compose.resources.stringResource
 import specinspect.composeapp.generated.resources.Res
 import specinspect.composeapp.generated.resources.action_cancel
 import specinspect.composeapp.generated.resources.action_share
+import specinspect.composeapp.generated.resources.label_and
+import specinspect.composeapp.generated.resources.label_given
 import specinspect.composeapp.generated.resources.label_then
 import specinspect.composeapp.generated.resources.label_when
 import specinspect.composeapp.generated.resources.report_include_correct
@@ -284,38 +288,73 @@ fun YellowPillBadge(text: String, modifier: Modifier = Modifier) {
 
 @Composable
 fun WhenBlock(text: String) {
-    TintedCard(
-        background = AppColors.TealSurface,
-        border = AppColors.TealBorder,
-        padding = PaddingValues(horizontal = 14.dp, vertical = 12.dp),
-    ) {
-        Text(
-            stringResource(Res.string.label_when),
-            style = MaterialTheme.typography.labelMedium,
-            color = AppColors.Teal,
-        )
-        Text(
-            text,
-            style = MaterialTheme.typography.bodyMedium,
-            color = AppColors.Dark,
-        )
-    }
+    ScenarioStepBlock(ScenarioStep(ScenarioStepKeyword.WHEN, text))
 }
 
 @Composable
 fun ThenBlock(text: String) {
+    ScenarioStepBlock(ScenarioStep(ScenarioStepKeyword.THEN, text))
+}
+
+@Composable
+fun ScenarioStepBlocks(
+    steps: List<ScenarioStep>,
+    fallbackWhenText: String,
+    fallbackThenText: String,
+) {
+    val visibleSteps = steps.ifEmpty {
+        buildList {
+            if (fallbackWhenText.isNotBlank()) add(ScenarioStep(ScenarioStepKeyword.WHEN, fallbackWhenText))
+            if (fallbackThenText.isNotBlank()) add(ScenarioStep(ScenarioStepKeyword.THEN, fallbackThenText))
+        }
+    }
+
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        visibleSteps.forEach { step ->
+            ScenarioStepBlock(step)
+        }
+    }
+}
+
+@Composable
+private fun ScenarioStepBlock(step: ScenarioStep) {
+    val background = when (step.keyword) {
+        ScenarioStepKeyword.GIVEN -> AppColors.GreyVioletSurface
+        ScenarioStepKeyword.WHEN -> AppColors.TealSurface
+        ScenarioStepKeyword.THEN -> AppColors.YellowSurface
+        ScenarioStepKeyword.AND -> Color(0x1A7E7F9A)
+    }
+    val border = when (step.keyword) {
+        ScenarioStepKeyword.GIVEN -> AppColors.GreyVioletBorder
+        ScenarioStepKeyword.WHEN -> AppColors.TealBorder
+        ScenarioStepKeyword.THEN -> AppColors.YellowBorder
+        ScenarioStepKeyword.AND -> AppColors.CoralBorder
+    }
+    val label = when (step.keyword) {
+        ScenarioStepKeyword.GIVEN -> stringResource(Res.string.label_given)
+        ScenarioStepKeyword.WHEN -> stringResource(Res.string.label_when)
+        ScenarioStepKeyword.THEN -> stringResource(Res.string.label_then)
+        ScenarioStepKeyword.AND -> stringResource(Res.string.label_and)
+    }
+    val labelColor = when (step.keyword) {
+        ScenarioStepKeyword.GIVEN -> AppColors.GreyViolet
+        ScenarioStepKeyword.WHEN -> AppColors.Teal
+        ScenarioStepKeyword.THEN -> AppColors.Dark
+        ScenarioStepKeyword.AND -> AppColors.Coral
+    }
+
     TintedCard(
-        background = AppColors.YellowSurface,
-        border = AppColors.YellowBorder,
+        background = background,
+        border = border,
         padding = PaddingValues(horizontal = 14.dp, vertical = 12.dp),
     ) {
         Text(
-            stringResource(Res.string.label_then),
+            label,
             style = MaterialTheme.typography.labelMedium,
-            color = AppColors.Dark,
+            color = labelColor,
         )
         Text(
-            text,
+            step.text,
             style = MaterialTheme.typography.bodyMedium,
             color = AppColors.Dark,
         )
