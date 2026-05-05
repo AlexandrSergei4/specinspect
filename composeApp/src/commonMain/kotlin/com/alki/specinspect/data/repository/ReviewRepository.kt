@@ -36,6 +36,8 @@ class ReviewRepository(
 
     fun statusOf(scenario: Scenario): ReviewStatus = statusOf(scenario.id)
 
+    fun reviewedScenarioCount(): Int = _statuses.value.size
+
     /**
      * Удобный read-only снимок: функция, которая по сценарию вернёт его статус.
      */

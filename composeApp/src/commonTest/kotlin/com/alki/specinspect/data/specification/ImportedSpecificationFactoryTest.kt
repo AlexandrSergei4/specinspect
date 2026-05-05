@@ -1,5 +1,6 @@
 package com.alki.specinspect.data.specification
 
+import com.alki.specinspect.data.analytics.AnalyticsSpecificationType
 import com.alki.specinspect.data.importer.ImportedSpecFile
 import com.alki.specinspect.data.models.GitSource
 import kotlin.test.Test
@@ -12,7 +13,7 @@ class ImportedSpecificationFactoryTest {
 
     @Test
     fun createsSpecificationFromOpenSpecFiles() {
-        val specification = ImportedSpecificationFactory.create(
+        val result = ImportedSpecificationFactory.createWithMetadata(
             name = "Demo Spec",
             files = listOf(
                 ImportedSpecFile(
@@ -26,7 +27,9 @@ class ImportedSpecificationFactoryTest {
                 ),
             ),
         )
+        val specification = result.specification
 
+        assertEquals(AnalyticsSpecificationType.OpenSpec, result.type)
         assertEquals("Demo Spec", specification.name)
         assertEquals(1, specification.subspecs.size)
         assertEquals("dashboard", specification.subspecs.single().name)
@@ -40,7 +43,7 @@ class ImportedSpecificationFactoryTest {
 
     @Test
     fun createsSpecificationFromSpecKitFilesUsingAcceptanceScenariosOnly() {
-        val specification = ImportedSpecificationFactory.create(
+        val result = ImportedSpecificationFactory.createWithMetadata(
             name = "Spec Kit",
             files = listOf(
                 ImportedSpecFile(
@@ -54,7 +57,9 @@ class ImportedSpecificationFactoryTest {
                 branch = "main",
             ),
         )
+        val specification = result.specification
 
+        assertEquals(AnalyticsSpecificationType.SpecKit, result.type)
         val subspec = specification.subspecs.single()
         val requirement = subspec.requirements.single()
         val firstScenario = requirement.scenarios.first()

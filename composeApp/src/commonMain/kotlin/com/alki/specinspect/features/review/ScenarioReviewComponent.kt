@@ -1,5 +1,8 @@
 package com.alki.specinspect.features.review
 
+import com.alki.specinspect.data.analytics.AnalyticsLogger
+import com.alki.specinspect.data.analytics.AnalyticsScope
+import com.alki.specinspect.data.analytics.NoOpAnalyticsLogger
 import com.alki.specinspect.data.models.ReviewStatus
 import com.alki.specinspect.data.models.Scenario
 import com.alki.specinspect.data.models.ScenarioStep
@@ -81,6 +84,7 @@ class DefaultScenarioReviewComponent(
     private val scope: ReviewScope,
     private val specRepo: SpecificationRepository,
     private val reviewRepo: ReviewRepository,
+    private val analyticsLogger: AnalyticsLogger = NoOpAnalyticsLogger,
     private val onBackCallback: () -> Unit,
 ) : ScenarioReviewComponent, ComponentContext by componentContext {
 
@@ -196,6 +200,13 @@ class DefaultScenarioReviewComponent(
             )
         )
         val nextIndex = s.currentIndex + 1
+        analyticsLogger.logReviewCardReviewed(
+            status = status,
+            reviewedCardsCount = reviewRepo.reviewedScenarioCount(),
+            sessionReviewedCardsCount = nextIndex,
+            totalCardsInSession = s.cards.size,
+            reviewScope = scope.toAnalyticsScope(),
+        )
         if (nextIndex >= s.cards.size) {
             _state.value = s.copy(currentIndex = nextIndex, canUndo = true, finished = true)
             onBackCallback()
@@ -221,6 +232,14 @@ class DefaultScenarioReviewComponent(
     }
 
     override fun onOpenSource(url: String) {
+        analyticsLogger.logGitHubSourceOpened(AnalyticsScope.Review)
         UrlOpener.openUrl(url)
     }
 }
+
+private fun ReviewScope.toAnalyticsScope(): AnalyticsScope =
+    when (this) {
+        is ReviewScope.Spec -> AnalyticsScope.Spec
+        is ReviewScope.Subspec -> AnalyticsScope.Subspec
+        is ReviewScope.Requirement -> AnalyticsScope.Requirement
+    }

@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import com.alki.specinspect.data.analytics.FirebaseAnalyticsLogger
 import com.alki.specinspect.data.importer.GitHubContentsSpecificationImporter
 import com.alki.specinspect.data.repository.ReviewRepository
 import com.alki.specinspect.data.repository.SpecificationRepository
@@ -60,6 +61,7 @@ class MainActivity : ComponentActivity() {
             gitSpecificationImporter = GitHubContentsSpecificationImporter(),
             tokenStorage = AndroidUserAccessTokenSecureStorage(applicationContext),
             themePreferenceStorage = AndroidThemePreferenceStorage(applicationContext),
+            analyticsLogger = FirebaseAnalyticsLogger(),
         )
 
         setContent {

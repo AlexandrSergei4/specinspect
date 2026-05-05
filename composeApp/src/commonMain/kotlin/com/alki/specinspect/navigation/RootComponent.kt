@@ -1,5 +1,7 @@
 package com.alki.specinspect.navigation
 
+import com.alki.specinspect.data.analytics.AnalyticsLogger
+import com.alki.specinspect.data.analytics.NoOpAnalyticsLogger
 import com.alki.specinspect.data.importer.GitSpecificationImporter
 import com.alki.specinspect.data.importer.UnsupportedGitSpecificationImporter
 import com.alki.specinspect.data.repository.ReviewRepository
@@ -45,6 +47,7 @@ class RootComponent(
     private val gitSpecificationImporter: GitSpecificationImporter = UnsupportedGitSpecificationImporter(),
     private val tokenStorage: UserAccessTokenSecureStorage = NoOpUserAccessTokenSecureStorage,
     private val themePreferenceStorage: ThemePreferenceStorage = NoOpThemePreferenceStorage,
+    private val analyticsLogger: AnalyticsLogger = NoOpAnalyticsLogger,
 ) : ComponentContext by componentContext {
 
     private val navigation = StackNavigation<Config>()
@@ -92,6 +95,7 @@ class RootComponent(
                 specId = config.specId,
                 specRepo = specRepo,
                 reviewRepo = reviewRepo,
+                analyticsLogger = analyticsLogger,
                 onBackCallback = { navigation.pop() },
                 onStartReviewCallback = { specId ->
                     navigation.pushNew(Config.Review(ReviewScope.Spec(specId)))
@@ -111,6 +115,7 @@ class RootComponent(
                 subspecId = config.subspecId,
                 specRepo = specRepo,
                 reviewRepo = reviewRepo,
+                analyticsLogger = analyticsLogger,
                 onBackCallback = { navigation.pop() },
                 onStartReviewCallback = { specId, subspecId ->
                     navigation.pushNew(Config.Review(ReviewScope.Subspec(specId, subspecId)))
@@ -128,6 +133,7 @@ class RootComponent(
                 requirementId = config.requirementId,
                 specRepo = specRepo,
                 reviewRepo = reviewRepo,
+                analyticsLogger = analyticsLogger,
                 onBackCallback = { navigation.pop() },
                 onStartReviewCallback = { specId, subspecId, reqId ->
                     navigation.pushNew(Config.Review(ReviewScope.Requirement(specId, subspecId, reqId)))
@@ -140,6 +146,7 @@ class RootComponent(
                 scope = config.scope,
                 specRepo = specRepo,
                 reviewRepo = reviewRepo,
+                analyticsLogger = analyticsLogger,
                 onBackCallback = { navigation.pop() },
             )
         )
@@ -149,6 +156,7 @@ class RootComponent(
                 repo = specRepo,
                 importer = gitSpecificationImporter,
                 tokenStorage = tokenStorage,
+                analyticsLogger = analyticsLogger,
                 onBackCallback = { navigation.pop() },
                 onAddedCallback = { navigation.pop() },
             )

@@ -1,9 +1,11 @@
 package com.alki.specinspect.data.specification
 
 import com.alki.specinspect.data.importer.ImportedSpecFile
+import com.alki.specinspect.data.analytics.AnalyticsSpecificationType
 import com.alki.specinspect.data.importer.parseGitHubRepository
 import com.alki.specinspect.data.models.GitSource
 import com.alki.specinspect.data.models.Specification
+import com.alki.specinspect.data.models.Subspec
 import com.alki.specinspect.data.openspec.OpenSpecParser
 import com.alki.specinspect.data.speckit.SpecKitParser
 import com.alki.specinspect.localization.AppTextKey
@@ -16,13 +18,23 @@ object ImportedSpecificationFactory {
         name: String,
         files: List<ImportedSpecFile>,
         gitSource: GitSource? = null,
-    ): Specification {
+    ): Specification = createWithMetadata(
+        name = name,
+        files = files,
+        gitSource = gitSource,
+    ).specification
+
+    fun createWithMetadata(
+        name: String,
+        files: List<ImportedSpecFile>,
+        gitSource: GitSource? = null,
+    ): ImportedSpecificationResult {
         val specName = name.trim()
         if (specName.isEmpty()) localizedError(AppTextKey.ErrorSpecNameRequired)
         if (files.isEmpty()) localizedError(AppTextKey.ErrorNoSpecFiles)
 
         val specSeed = Random.nextInt(100000, 999999)
-        val subspecs = files
+        val parsedSubspecs = files
             .sortedBy { it.name.lowercase() }
             .mapIndexed { index, file ->
                 val subspecName = file.name.trim()
@@ -36,7 +48,10 @@ object ImportedSpecificationFactory {
                     filePath = file.path,
                 )
                 if (specKitSubspec.requirements.isNotEmpty()) {
-                    specKitSubspec
+                    ParsedImportedSubspec(
+                        subspec = specKitSubspec,
+                        type = AnalyticsSpecificationType.SpecKit,
+                    )
                 } else {
                     val openSpecSubspec = OpenSpecParser.parseSubspec(
                         name = subspecName,
@@ -47,16 +62,23 @@ object ImportedSpecificationFactory {
                     if (openSpecSubspec.requirements.isEmpty()) {
                         localizedError(AppTextKey.ErrorSpecKitOrRequirementParseFailed, subspecName)
                     }
-                    openSpecSubspec
+                    ParsedImportedSubspec(
+                        subspec = openSpecSubspec,
+                        type = AnalyticsSpecificationType.OpenSpec,
+                    )
                 }
             }
 
-        return Specification(
-            id = "user-spec-$specSeed",
-            name = specName,
-            isDemo = false,
-            subspecs = subspecs,
-            gitSource = gitSource,
+        val subspecs = parsedSubspecs.map { it.subspec }
+        return ImportedSpecificationResult(
+            specification = Specification(
+                id = "user-spec-$specSeed",
+                name = specName,
+                isDemo = false,
+                subspecs = subspecs,
+                gitSource = gitSource,
+            ),
+            type = parsedSubspecs.map { it.type }.toSpecificationType(),
         )
     }
 
@@ -67,4 +89,19 @@ object ImportedSpecificationFactory {
             branch = branch.trim(),
         )
     }
+}
+
+data class ImportedSpecificationResult(
+    val specification: Specification,
+    val type: AnalyticsSpecificationType,
+)
+
+private data class ParsedImportedSubspec(
+    val subspec: Subspec,
+    val type: AnalyticsSpecificationType,
+)
+
+private fun List<AnalyticsSpecificationType>.toSpecificationType(): AnalyticsSpecificationType {
+    val uniqueTypes = distinct()
+    return if (uniqueTypes.size == 1) uniqueTypes.single() else AnalyticsSpecificationType.Mixed
 }

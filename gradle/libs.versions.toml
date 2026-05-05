@@ -88,6 +88,7 @@ compose-icons-tabler = { module = "br.com.devsrsouza.compose.icons:tabler-icons"
 #firebase
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase"}
 firebase-auth = { module = "dev.gitlive:firebase-auth", version.ref = "gitliveFirebase" }
+firebase-analytics = { module = "dev.gitlive:firebase-analytics", version.ref = "gitliveFirebase" }
 firebase-firestore = { module = "dev.gitlive:firebase-firestore", version.ref = "gitliveFirebase" }
 firebase-functions = { module = "dev.gitlive:firebase-functions", version.ref = "gitliveFirebase" }
 

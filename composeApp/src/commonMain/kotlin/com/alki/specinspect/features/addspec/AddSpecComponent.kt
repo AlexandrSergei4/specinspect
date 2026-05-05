@@ -1,10 +1,15 @@
 package com.alki.specinspect.features.addspec
 
+import com.alki.specinspect.data.analytics.AnalyticsLogger
+import com.alki.specinspect.data.analytics.AnalyticsRepositoryType
+import com.alki.specinspect.data.analytics.NoOpAnalyticsLogger
 import com.alki.specinspect.data.importer.AvailableGitRepository
 import com.alki.specinspect.data.importer.GitSpecificationImportRequest
 import com.alki.specinspect.data.importer.GitSpecificationImporter
-import com.alki.specinspect.data.models.Specification
+import com.alki.specinspect.data.models.totalRequirements
+import com.alki.specinspect.data.models.totalScenarios
 import com.alki.specinspect.data.specification.ImportedSpecificationFactory
+import com.alki.specinspect.data.specification.ImportedSpecificationResult
 import com.alki.specinspect.data.repository.SpecificationRepository
 import com.alki.specinspect.data.storage.UserAccessTokenSecureStorage
 import com.alki.specinspect.localization.AppText
@@ -75,6 +80,7 @@ class DefaultAddSpecComponent(
     private val repo: SpecificationRepository,
     private val importer: GitSpecificationImporter,
     private val tokenStorage: UserAccessTokenSecureStorage,
+    private val analyticsLogger: AnalyticsLogger = NoOpAnalyticsLogger,
     private val onBackCallback: () -> Unit,
     private val onAddedCallback: () -> Unit,
 ) : AddSpecComponent, ComponentContext by componentContext {
@@ -234,9 +240,16 @@ class DefaultAddSpecComponent(
         _state.value = s.copy(isLoading = true).recomputeCanSubmit()
         scope.launch {
             try {
-                val spec = loadSpecification(s)
+                val importResult = loadSpecification(s)
                 withContext(Dispatchers.Main) {
-                    repo.add(spec)
+                    repo.add(importResult.specification)
+                    analyticsLogger.logRepositoryImported(
+                        repositoryType = s.repositorySource.toAnalyticsRepositoryType(),
+                        specificationType = importResult.type,
+                        subspecCount = importResult.specification.subspecs.size,
+                        requirementCount = importResult.specification.totalRequirements(),
+                        scenarioCount = importResult.specification.totalScenarios(),
+                    )
                     onAddedCallback()
                 }
             } catch (e: CancellationException) {
@@ -385,7 +398,7 @@ class DefaultAddSpecComponent(
         }
     }
 
-    private suspend fun loadSpecification(state: AddSpecState): Specification {
+    private suspend fun loadSpecification(state: AddSpecState): ImportedSpecificationResult {
         val repositoryUrl = state.activeRepositoryUrl().trim()
         val branch = state.branch.trim()
         val files = importer.importSpecification(
@@ -396,7 +409,7 @@ class DefaultAddSpecComponent(
                 userAccessToken = state.activeRepositoryToken(),
             )
         )
-        return ImportedSpecificationFactory.create(
+        return ImportedSpecificationFactory.createWithMetadata(
             name = state.name,
             files = files,
             gitSource = ImportedSpecificationFactory.gitSourceFrom(
@@ -507,6 +520,12 @@ class DefaultAddSpecComponent(
         return value.split('/').filter { it.isNotBlank() }
     }
 }
+
+private fun AddSpecRepositorySource.toAnalyticsRepositoryType(): AnalyticsRepositoryType =
+    when (this) {
+        AddSpecRepositorySource.Personal -> AnalyticsRepositoryType.Personal
+        AddSpecRepositorySource.Public -> AnalyticsRepositoryType.Public
+    }
 
 private data class PublicRepositorySelection(
     val branch: String? = null,

@@ -1,6 +1,7 @@
 package com.alki.specinspect
 
 import androidx.compose.ui.window.ComposeUIViewController
+import com.alki.specinspect.data.analytics.FirebaseAnalyticsLogger
 import com.alki.specinspect.data.importer.GitHubContentsSpecificationImporter
 import com.alki.specinspect.data.repository.ReviewRepository
 import com.alki.specinspect.data.repository.SpecificationRepository
@@ -31,6 +32,7 @@ fun MainViewController() = ComposeUIViewController {
         gitSpecificationImporter = GitHubContentsSpecificationImporter(),
         tokenStorage = IosUserAccessTokenSecureStorage(),
         themePreferenceStorage = IosThemePreferenceStorage(),
+        analyticsLogger = FirebaseAnalyticsLogger(),
     )
 
     RootContent(component = rootComponent)

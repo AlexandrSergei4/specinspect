@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1FC334022EFBC851002B6184 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 1FC334012EFBC851002B6184 /* FirebaseAnalytics */; };
 		1FC333EF2EFBC851002B6184 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 1FC333EE2EFBC851002B6184 /* FirebaseAuth */; };
 		1FC333F12EFBC851002B6184 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 1FC333F02EFBC851002B6184 /* FirebaseFirestore */; };
 		1FC333F32EFBC851002B6184 /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = 1FC333F22EFBC851002B6184 /* FirebaseFunctions */; };
@@ -47,6 +48,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1FC334022EFBC851002B6184 /* FirebaseAnalytics in Frameworks */,
 				1FC333EF2EFBC851002B6184 /* FirebaseAuth in Frameworks */,
 				1FC333F12EFBC851002B6184 /* FirebaseFirestore in Frameworks */,
 				1FC333F32EFBC851002B6184 /* FirebaseFunctions in Frameworks */,
@@ -94,6 +96,7 @@
 			);
 			name = iosApp;
 			packageProductDependencies = (
+				1FC334012EFBC851002B6184 /* FirebaseAnalytics */,
 				1FC333EE2EFBC851002B6184 /* FirebaseAuth */,
 				1FC333F02EFBC851002B6184 /* FirebaseFirestore */,
 				1FC333F22EFBC851002B6184 /* FirebaseFunctions */,
@@ -396,6 +399,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		1FC334012EFBC851002B6184 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1FC333ED2EFBC851002B6184 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
 		1FC333EE2EFBC851002B6184 /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 1FC333ED2EFBC851002B6184 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;

@@ -1,5 +1,8 @@
 package com.alki.specinspect.features.requirement
 
+import com.alki.specinspect.data.analytics.AnalyticsLogger
+import com.alki.specinspect.data.analytics.AnalyticsScope
+import com.alki.specinspect.data.analytics.NoOpAnalyticsLogger
 import com.alki.specinspect.data.models.Requirement
 import com.alki.specinspect.data.models.ReviewReportStrings
 import com.alki.specinspect.data.models.ReviewStats
@@ -78,6 +81,7 @@ class DefaultRequirementDetailComponent(
     private val requirementId: String,
     private val specRepo: SpecificationRepository,
     private val reviewRepo: ReviewRepository,
+    private val analyticsLogger: AnalyticsLogger = NoOpAnalyticsLogger,
     private val onBackCallback: () -> Unit,
     private val onStartReviewCallback: (specId: String, subspecId: String, requirementId: String) -> Unit,
 ) : RequirementDetailComponent, ComponentContext by componentContext {
@@ -159,6 +163,7 @@ class DefaultRequirementDetailComponent(
             strings = reportStrings,
             specificationName = specificationName,
         )
+        analyticsLogger.logShareUsed(AnalyticsScope.Requirement)
         scope.launch {
             ImageSharing.shareText(report, shareTitle)
         }
@@ -174,6 +179,7 @@ class DefaultRequirementDetailComponent(
     }
 
     override fun onOpenSource(url: String) {
+        analyticsLogger.logGitHubSourceOpened(AnalyticsScope.Requirement)
         UrlOpener.openUrl(url)
     }
 }
