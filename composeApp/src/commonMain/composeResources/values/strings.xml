@@ -10,6 +10,7 @@
     <string name="action_cancel">Отмена</string>
     <string name="action_open_github_source">Открыть источник на GitHub</string>
     <string name="action_start_review">Начать ревью</string>
+    <string name="action_settings">Настройки</string>
 
     <string name="onboarding_description">Ревью спецификаций в формате карточек. Свайпайте вправо для корректных требований и влево для некорректных.</string>
     <string name="onboarding_start_demo">Начать с демо-спецификацией</string>
@@ -26,6 +27,12 @@
     <string name="my_specs_loaded">Загруженные спецификации</string>
     <string name="my_specs_empty">Список пуст. Нажмите «Добавить спецификации», чтобы загрузить первую.</string>
     <string name="badge_demo">Демо</string>
+
+    <string name="settings_title">Настройки</string>
+    <string name="settings_theme_title">Тема</string>
+    <string name="settings_theme_auto">Авто</string>
+    <string name="settings_theme_light">Светлая</string>
+    <string name="settings_theme_dark">Темная</string>
 
     <string name="add_spec_title">Добавить спецификацию</string>
     <string name="add_spec_repository_label">Репозиторий</string>

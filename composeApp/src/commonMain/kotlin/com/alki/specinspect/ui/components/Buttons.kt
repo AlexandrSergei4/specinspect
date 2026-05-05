@@ -60,7 +60,7 @@ fun PrimaryButton(
             .fillMaxWidth()
             .height(height.dp)
             .clip(RoundedCornerShape(14.dp))
-            .background(if (enabled) AppColors.Dark else AppColors.GreyViolet)
+            .background(if (enabled) AppColors.PrimaryAction else AppColors.GreyViolet)
             .clickable(enabled = enabled) { onClick() },
         contentAlignment = Alignment.Center,
     ) {
@@ -105,10 +105,10 @@ fun PrimaryButton(
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
             if (leadingIcon != null) {
-                Icon(leadingIcon, contentDescription = null, tint = AppColors.Light, modifier = Modifier.size(20.dp))
+                Icon(leadingIcon, contentDescription = null, tint = AppColors.OnPrimaryAction, modifier = Modifier.size(20.dp))
                 Spacer(Modifier.width(8.dp))
             }
-            Text(text, style = MaterialTheme.typography.titleMedium, color = AppColors.Light)
+            Text(text, style = MaterialTheme.typography.titleMedium, color = AppColors.OnPrimaryAction)
         }
     }
 }
@@ -173,8 +173,8 @@ fun IconChip(
     icon: ImageVector,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    background: Color = AppColors.Dark,
-    iconTint: Color = AppColors.Light,
+    background: Color = AppColors.PrimaryAction,
+    iconTint: Color = AppColors.OnPrimaryAction,
     contentDescription: String? = null,
 ) {
     Box(

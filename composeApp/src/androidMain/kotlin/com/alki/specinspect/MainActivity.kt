@@ -8,6 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import com.alki.specinspect.data.importer.GitHubContentsSpecificationImporter
 import com.alki.specinspect.data.repository.ReviewRepository
 import com.alki.specinspect.data.repository.SpecificationRepository
+import com.alki.specinspect.data.storage.AndroidThemePreferenceStorage
 import com.alki.specinspect.data.storage.AndroidUserAccessTokenSecureStorage
 import com.alki.specinspect.di.appModule
 import com.alki.specinspect.di.platformModule
@@ -58,6 +59,7 @@ class MainActivity : ComponentActivity() {
             reviewRepo = reviewRepo,
             gitSpecificationImporter = GitHubContentsSpecificationImporter(),
             tokenStorage = AndroidUserAccessTokenSecureStorage(applicationContext),
+            themePreferenceStorage = AndroidThemePreferenceStorage(applicationContext),
         )
 
         setContent {

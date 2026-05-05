@@ -2,12 +2,15 @@ package com.alki.specinspect.navigation
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.alki.specinspect.features.addspec.AddSpecScreen
 import com.alki.specinspect.features.myspecs.MySpecsScreen
 import com.alki.specinspect.features.onboarding.OnboardingScreen
 import com.alki.specinspect.features.requirement.RequirementDetailScreen
 import com.alki.specinspect.features.review.ScenarioReviewScreen
+import com.alki.specinspect.features.settings.SettingsScreen
 import com.alki.specinspect.features.spec.SpecDetailScreen
 import com.alki.specinspect.features.subspec.SubspecDetailScreen
 import com.alki.specinspect.ui.theme.SampleTheme
@@ -22,7 +25,9 @@ fun RootContent(
     component: RootComponent,
     modifier: Modifier = Modifier,
 ) {
-    SampleTheme {
+    val themeMode by component.themeMode.collectAsState()
+
+    SampleTheme(themeMode = themeMode) {
         Children(
             stack = component.childStack,
             modifier = modifier.fillMaxSize(),
@@ -31,6 +36,7 @@ fun RootContent(
             when (val instance = child.instance) {
                 is RootComponent.Child.Onboarding -> OnboardingScreen(instance.component)
                 is RootComponent.Child.MySpecs -> MySpecsScreen(instance.component)
+                is RootComponent.Child.Settings -> SettingsScreen(instance.component)
                 is RootComponent.Child.SpecDetail -> SpecDetailScreen(instance.component)
                 is RootComponent.Child.SubspecDetail -> SubspecDetailScreen(instance.component)
                 is RootComponent.Child.RequirementDetail -> RequirementDetailScreen(instance.component)

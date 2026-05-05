@@ -4,6 +4,7 @@ import androidx.compose.ui.window.ComposeUIViewController
 import com.alki.specinspect.data.importer.GitHubContentsSpecificationImporter
 import com.alki.specinspect.data.repository.ReviewRepository
 import com.alki.specinspect.data.repository.SpecificationRepository
+import com.alki.specinspect.data.storage.IosThemePreferenceStorage
 import com.alki.specinspect.data.storage.IosUserAccessTokenSecureStorage
 import com.alki.specinspect.di.appModule
 import com.alki.specinspect.di.platformModule
@@ -29,6 +30,7 @@ fun MainViewController() = ComposeUIViewController {
         reviewRepo = reviewRepo,
         gitSpecificationImporter = GitHubContentsSpecificationImporter(),
         tokenStorage = IosUserAccessTokenSecureStorage(),
+        themePreferenceStorage = IosThemePreferenceStorage(),
     )
 
     RootContent(component = rootComponent)

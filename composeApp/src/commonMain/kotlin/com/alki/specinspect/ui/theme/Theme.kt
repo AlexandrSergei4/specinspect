@@ -1,9 +1,11 @@
 package com.alki.specinspect.ui.theme
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Typography
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.TextStyle
@@ -15,38 +17,73 @@ import org.jetbrains.compose.resources.Font
 import specinspect.composeapp.generated.resources.Res
 import specinspect.composeapp.generated.resources.inter_font
 
-private val SpecInspectColorScheme = lightColorScheme(
-    primary = AppColors.Dark,
-    onPrimary = AppColors.Light,
-    primaryContainer = AppColors.Dark,
-    onPrimaryContainer = AppColors.Light,
+private fun specInspectColorScheme(palette: AppColorPalette, isDark: Boolean) = if (isDark) {
+    darkColorScheme(
+        primary = palette.text,
+        onPrimary = palette.background,
+        primaryContainer = palette.surface2,
+        onPrimaryContainer = palette.text,
 
-    secondary = AppColors.Teal,
-    onSecondary = AppColors.White,
-    secondaryContainer = AppColors.TealSurface,
-    onSecondaryContainer = AppColors.Teal,
+        secondary = palette.teal,
+        onSecondary = palette.background,
+        secondaryContainer = palette.tealSurface,
+        onSecondaryContainer = palette.teal,
 
-    tertiary = AppColors.Yellow,
-    onTertiary = AppColors.Dark,
-    tertiaryContainer = AppColors.YellowSurface,
-    onTertiaryContainer = AppColors.Dark,
+        tertiary = palette.yellow,
+        onTertiary = palette.background,
+        tertiaryContainer = palette.yellowSurface,
+        onTertiaryContainer = palette.text,
 
-    background = AppColors.Light,
-    onBackground = AppColors.Dark,
+        background = palette.background,
+        onBackground = palette.text,
 
-    surface = AppColors.White,
-    onSurface = AppColors.Dark,
-    surfaceVariant = AppColors.Light,
-    onSurfaceVariant = AppColors.GreyViolet,
+        surface = palette.surface,
+        onSurface = palette.text,
+        surfaceVariant = palette.surface2,
+        onSurfaceVariant = palette.muted,
 
-    error = AppColors.Coral,
-    onError = AppColors.White,
-    errorContainer = AppColors.CoralSurface,
-    onErrorContainer = AppColors.Coral,
+        error = palette.coral,
+        onError = palette.background,
+        errorContainer = palette.coralSurface,
+        onErrorContainer = palette.coral,
 
-    outline = AppColors.CardBorder,
-    outlineVariant = AppColors.CardBorder
-)
+        outline = palette.cardBorder,
+        outlineVariant = palette.cardBorderStrong,
+    )
+} else {
+    lightColorScheme(
+        primary = palette.text,
+        onPrimary = palette.background,
+        primaryContainer = palette.text,
+        onPrimaryContainer = palette.background,
+
+        secondary = palette.teal,
+        onSecondary = palette.surface,
+        secondaryContainer = palette.tealSurface,
+        onSecondaryContainer = palette.teal,
+
+        tertiary = palette.yellow,
+        onTertiary = palette.text,
+        tertiaryContainer = palette.yellowSurface,
+        onTertiaryContainer = palette.text,
+
+        background = palette.background,
+        onBackground = palette.text,
+
+        surface = palette.surface,
+        onSurface = palette.text,
+        surfaceVariant = palette.background,
+        onSurfaceVariant = palette.muted,
+
+        error = palette.coral,
+        onError = palette.surface,
+        errorContainer = palette.coralSurface,
+        onErrorContainer = palette.coral,
+
+        outline = palette.cardBorder,
+        outlineVariant = palette.cardBorderStrong,
+    )
+}
 
 @Composable
 private fun appFontFamily(): FontFamily {
@@ -87,9 +124,20 @@ private val AppShapes = Shapes(
 )
 
 @Composable
-fun SampleTheme(content: @Composable () -> Unit) {
+fun SampleTheme(
+    themeMode: AppThemeMode = AppThemeMode.System,
+    content: @Composable () -> Unit,
+) {
+    val isDark = when (themeMode) {
+        AppThemeMode.System -> isSystemInDarkTheme()
+        AppThemeMode.Light -> false
+        AppThemeMode.Dark -> true
+    }
+    val palette = if (isDark) darkAppColorPalette else lightAppColorPalette
+    AppColors.currentPalette = palette
+
     MaterialTheme(
-        colorScheme = SpecInspectColorScheme,
+        colorScheme = specInspectColorScheme(palette, isDark),
         typography = appTypography(appFontFamily()),
         shapes = AppShapes,
         content = content

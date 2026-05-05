@@ -29,6 +29,7 @@ import com.alki.specinspect.ui.components.AppTopBar
 import com.alki.specinspect.ui.components.DashedButton
 import com.alki.specinspect.ui.components.IconChip
 import com.alki.specinspect.ui.components.SectionHeader
+import com.alki.specinspect.ui.components.SettingsIconButton
 import com.alki.specinspect.ui.components.WhiteCard
 import com.alki.specinspect.ui.components.YellowPillBadge
 import com.alki.specinspect.ui.theme.AppColors
@@ -41,6 +42,7 @@ import org.jetbrains.compose.resources.stringResource
 import specinspect.composeapp.generated.resources.Res
 import specinspect.composeapp.generated.resources.action_delete
 import specinspect.composeapp.generated.resources.action_open
+import specinspect.composeapp.generated.resources.action_settings
 import specinspect.composeapp.generated.resources.badge_demo
 import specinspect.composeapp.generated.resources.count_requirements
 import specinspect.composeapp.generated.resources.count_specifications
@@ -66,7 +68,16 @@ fun MySpecsScreen(component: MySpecsComponent) {
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
             item {
-                AppTopBar(title = stringResource(Res.string.my_specs_title), onBack = component::onBack)
+                AppTopBar(
+                    title = stringResource(Res.string.my_specs_title),
+                    onBack = component::onBack,
+                    trailing = {
+                        SettingsIconButton(
+                            onClick = component::onOpenSettings,
+                            contentDescription = stringResource(Res.string.action_settings),
+                        )
+                    },
+                )
             }
             item {
                 DashedButton(
@@ -144,8 +155,8 @@ private fun SpecCard(
             IconChip(
                 icon = TablerIcons.PlayerPlay,
                 onClick = onOpen,
-                background = AppColors.Dark,
-                iconTint = AppColors.Light,
+                background = AppColors.PrimaryAction,
+                iconTint = AppColors.OnPrimaryAction,
                 contentDescription = stringResource(Res.string.action_open),
             )
             Spacer(Modifier.width(8.dp))

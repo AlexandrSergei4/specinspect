@@ -5,6 +5,8 @@ import com.alki.specinspect.data.importer.UnsupportedGitSpecificationImporter
 import com.alki.specinspect.data.repository.ReviewRepository
 import com.alki.specinspect.data.repository.SpecificationRepository
 import com.alki.specinspect.data.storage.NoOpUserAccessTokenSecureStorage
+import com.alki.specinspect.data.storage.NoOpThemePreferenceStorage
+import com.alki.specinspect.data.storage.ThemePreferenceStorage
 import com.alki.specinspect.data.storage.UserAccessTokenSecureStorage
 import com.alki.specinspect.features.addspec.AddSpecComponent
 import com.alki.specinspect.features.addspec.DefaultAddSpecComponent
@@ -17,19 +19,23 @@ import com.alki.specinspect.features.requirement.RequirementDetailComponent
 import com.alki.specinspect.features.review.DefaultScenarioReviewComponent
 import com.alki.specinspect.features.review.ReviewScope
 import com.alki.specinspect.features.review.ScenarioReviewComponent
+import com.alki.specinspect.features.settings.DefaultSettingsComponent
+import com.alki.specinspect.features.settings.SettingsComponent
 import com.alki.specinspect.features.spec.DefaultSpecDetailComponent
 import com.alki.specinspect.features.spec.SpecDetailComponent
 import com.alki.specinspect.features.subspec.DefaultSubspecDetailComponent
 import com.alki.specinspect.features.subspec.SubspecDetailComponent
+import com.alki.specinspect.ui.theme.AppThemeMode
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
-import com.arkivanov.decompose.router.stack.popTo
 import com.arkivanov.decompose.router.stack.pushNew
-import com.arkivanov.decompose.router.stack.replaceCurrent
 import com.arkivanov.decompose.value.Value
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.serialization.Serializable
 
 class RootComponent(
@@ -38,9 +44,12 @@ class RootComponent(
     private val reviewRepo: ReviewRepository,
     private val gitSpecificationImporter: GitSpecificationImporter = UnsupportedGitSpecificationImporter(),
     private val tokenStorage: UserAccessTokenSecureStorage = NoOpUserAccessTokenSecureStorage,
+    private val themePreferenceStorage: ThemePreferenceStorage = NoOpThemePreferenceStorage,
 ) : ComponentContext by componentContext {
 
     private val navigation = StackNavigation<Config>()
+    private val _themeMode = MutableStateFlow(themePreferenceStorage.getThemeMode())
+    val themeMode: StateFlow<AppThemeMode> = _themeMode.asStateFlow()
 
     val childStack: Value<ChildStack<Config, Child>> = childStack(
         source = navigation,
@@ -56,6 +65,7 @@ class RootComponent(
                 componentContext = context,
                 onStartDemoCallback = { navigation.pushNew(Config.SpecDetail(specId = specRepo.getDemo().id)) },
                 onOpenMySpecsCallback = { navigation.pushNew(Config.MySpecs) },
+                onOpenSettingsCallback = { navigation.pushNew(Config.Settings) },
             )
         )
         is Config.MySpecs -> Child.MySpecs(
@@ -64,6 +74,15 @@ class RootComponent(
                 repo = specRepo,
                 onAddCallback = { navigation.pushNew(Config.AddSpec) },
                 onOpenCallback = { id -> navigation.pushNew(Config.SpecDetail(id)) },
+                onBackCallback = { navigation.pop() },
+                onOpenSettingsCallback = { navigation.pushNew(Config.Settings) },
+            )
+        )
+        is Config.Settings -> Child.Settings(
+            DefaultSettingsComponent(
+                componentContext = context,
+                themeMode = themeMode,
+                onThemeModeSelectedCallback = ::setThemeMode,
                 onBackCallback = { navigation.pop() },
             )
         )
@@ -136,10 +155,16 @@ class RootComponent(
         )
     }
 
+    private fun setThemeMode(mode: AppThemeMode) {
+        _themeMode.value = mode
+        themePreferenceStorage.setThemeMode(mode)
+    }
+
     @Serializable
     sealed class Config {
         @Serializable data object Onboarding : Config()
         @Serializable data object MySpecs : Config()
+        @Serializable data object Settings : Config()
         @Serializable data class SpecDetail(val specId: String) : Config()
         @Serializable data class SubspecDetail(val specId: String, val subspecId: String) : Config()
         @Serializable data class RequirementDetail(
@@ -154,6 +179,7 @@ class RootComponent(
     sealed class Child {
         data class Onboarding(val component: OnboardingComponent) : Child()
         data class MySpecs(val component: MySpecsComponent) : Child()
+        data class Settings(val component: SettingsComponent) : Child()
         data class SpecDetail(val component: SpecDetailComponent) : Child()
         data class SubspecDetail(val component: SubspecDetailComponent) : Child()
         data class RequirementDetail(val component: RequirementDetailComponent) : Child()

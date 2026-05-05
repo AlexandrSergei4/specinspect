@@ -1,10 +1,8 @@
 package com.alki.specinspect.features.onboarding
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -29,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.alki.specinspect.ui.components.PrimaryButton
 import com.alki.specinspect.ui.components.SecondaryButton
+import com.alki.specinspect.ui.components.SettingsIconButton
 import com.alki.specinspect.ui.components.WhiteCard
 import com.alki.specinspect.ui.theme.AppColors
 import compose.icons.TablerIcons
@@ -37,6 +36,7 @@ import compose.icons.tablericons.Folder
 import compose.icons.tablericons.PlayerPlay
 import org.jetbrains.compose.resources.stringResource
 import specinspect.composeapp.generated.resources.Res
+import specinspect.composeapp.generated.resources.action_settings
 import specinspect.composeapp.generated.resources.app_name
 import specinspect.composeapp.generated.resources.bullet_symbol
 import specinspect.composeapp.generated.resources.onboarding_bullet_review_requirements
@@ -68,7 +68,7 @@ fun OnboardingScreen(component: OnboardingComponent) {
                 modifier = Modifier
                     .size(80.dp)
                     .clip(RoundedCornerShape(24.dp))
-                    .background(AppColors.Dark),
+                    .background(AppColors.PrimaryAction),
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
@@ -121,6 +121,14 @@ fun OnboardingScreen(component: OnboardingComponent) {
                 BulletLine(stringResource(Res.string.onboarding_bullet_stats))
             }
         }
+
+        SettingsIconButton(
+            onClick = component::onOpenSettings,
+            contentDescription = stringResource(Res.string.action_settings),
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 16.dp, end = 16.dp),
+        )
     }
 }
 

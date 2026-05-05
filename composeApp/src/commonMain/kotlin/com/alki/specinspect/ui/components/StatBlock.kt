@@ -43,9 +43,9 @@ private data class StatStyle(
     val border: Color,
 )
 
-private val correctStyle = StatStyle(AppColors.Teal, AppColors.TealSurface, AppColors.TealBorder)
-private val incorrectStyle = StatStyle(AppColors.Coral, AppColors.CoralSurface, AppColors.CoralBorder)
-private val unreviewedStyle = StatStyle(AppColors.GreyViolet, AppColors.GreyVioletSurface, AppColors.GreyVioletBorder)
+private fun correctStyle() = StatStyle(AppColors.Teal, AppColors.TealSurface, AppColors.TealBorder)
+private fun incorrectStyle() = StatStyle(AppColors.Coral, AppColors.CoralSurface, AppColors.CoralBorder)
+private fun unreviewedStyle() = StatStyle(AppColors.GreyViolet, AppColors.GreyVioletSurface, AppColors.GreyVioletBorder)
 
 /**
  * Три цветные карточки статистики (корректные / некорректные / неоценённые)
@@ -65,7 +65,7 @@ fun StatsBlocks(
         StatBlock(
             count = stats.correct,
             label = stringResource(Res.string.stats_correct),
-            style = correctStyle,
+            style = correctStyle(),
             isSelected = selected == StatsFilter.CORRECT,
             onClick = { onFilter(if (selected == StatsFilter.CORRECT) StatsFilter.ALL else StatsFilter.CORRECT) },
             icon = StatIcon.Check,
@@ -74,7 +74,7 @@ fun StatsBlocks(
         StatBlock(
             count = stats.incorrect,
             label = stringResource(Res.string.stats_incorrect),
-            style = incorrectStyle,
+            style = incorrectStyle(),
             isSelected = selected == StatsFilter.INCORRECT,
             onClick = { onFilter(if (selected == StatsFilter.INCORRECT) StatsFilter.ALL else StatsFilter.INCORRECT) },
             icon = StatIcon.X,
@@ -83,7 +83,7 @@ fun StatsBlocks(
         StatBlock(
             count = stats.unreviewed,
             label = stringResource(Res.string.stats_unreviewed),
-            style = unreviewedStyle,
+            style = unreviewedStyle(),
             isSelected = selected == StatsFilter.UNREVIEWED,
             onClick = { onFilter(if (selected == StatsFilter.UNREVIEWED) StatsFilter.ALL else StatsFilter.UNREVIEWED) },
             icon = StatIcon.Circle,

@@ -15,6 +15,7 @@ interface MySpecsComponent {
     fun onOpen(specId: String)
     fun onDelete(specId: String)
     fun onBack()
+    fun onOpenSettings()
 }
 
 data class SpecListItem(
@@ -35,6 +36,7 @@ class DefaultMySpecsComponent(
     private val onAddCallback: () -> Unit,
     private val onOpenCallback: (String) -> Unit,
     private val onBackCallback: () -> Unit,
+    private val onOpenSettingsCallback: () -> Unit,
 ) : MySpecsComponent, ComponentContext by componentContext {
 
     private val _state = MutableStateFlow(MySpecsState())
@@ -58,6 +60,7 @@ class DefaultMySpecsComponent(
         refresh()
     }
     override fun onBack() = onBackCallback()
+    override fun onOpenSettings() = onOpenSettingsCallback()
 }
 
 private fun Specification.toListItem(): SpecListItem = SpecListItem(
