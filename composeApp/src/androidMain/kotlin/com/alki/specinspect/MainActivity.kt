@@ -1,10 +1,15 @@
 package com.alki.specinspect
 
+import android.graphics.Color as AndroidColor
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import com.alki.specinspect.data.analytics.FirebaseAnalyticsLogger
 import com.alki.specinspect.data.importer.GitHubContentsSpecificationImporter
 import com.alki.specinspect.data.repository.ReviewRepository
@@ -15,6 +20,7 @@ import com.alki.specinspect.di.appModule
 import com.alki.specinspect.di.platformModule
 import com.alki.specinspect.navigation.RootComponent
 import com.alki.specinspect.navigation.RootContent
+import com.alki.specinspect.ui.theme.AppThemeMode
 import com.alki.specinspect.util.ClipboardManager
 import com.alki.specinspect.util.ImageSharing
 import com.alki.specinspect.util.UrlOpener
@@ -43,17 +49,6 @@ class MainActivity : ComponentActivity() {
         ImageSharing.init(this)
         UrlOpener.init(this)
 
-        enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.light(
-                android.graphics.Color.TRANSPARENT,
-                android.graphics.Color.TRANSPARENT
-            ),
-            navigationBarStyle = SystemBarStyle.light(
-                android.graphics.Color.TRANSPARENT,
-                android.graphics.Color.TRANSPARENT
-            )
-        )
-
         val rootComponent = RootComponent(
             componentContext = defaultComponentContext(),
             specRepo = specRepo,
@@ -65,6 +60,26 @@ class MainActivity : ComponentActivity() {
         )
 
         setContent {
+            val themeMode by rootComponent.themeMode.collectAsState()
+            val systemInDarkTheme = isSystemInDarkTheme()
+            val useDarkSystemBars = when (themeMode) {
+                AppThemeMode.System -> systemInDarkTheme
+                AppThemeMode.Light -> false
+                AppThemeMode.Dark -> true
+            }
+
+            SideEffect {
+                val systemBarStyle = if (useDarkSystemBars) {
+                    SystemBarStyle.dark(AndroidColor.TRANSPARENT)
+                } else {
+                    SystemBarStyle.light(AndroidColor.TRANSPARENT, AndroidColor.TRANSPARENT)
+                }
+                enableEdgeToEdge(
+                    statusBarStyle = systemBarStyle,
+                    navigationBarStyle = systemBarStyle,
+                )
+            }
+
             RootContent(component = rootComponent)
         }
     }
