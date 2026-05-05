@@ -35,8 +35,12 @@
     <string name="settings_theme_dark">Темная</string>
 
     <string name="add_spec_title">Добавить спецификацию</string>
+    <string name="add_spec_source_personal">Personal</string>
+    <string name="add_spec_source_public">Public</string>
     <string name="add_spec_repository_label">Репозиторий</string>
     <string name="add_spec_repository_placeholder">Выберите репозиторий</string>
+    <string name="add_spec_public_repository_label">Публичный репозиторий</string>
+    <string name="add_spec_public_repository_placeholder">https://github.com/owner/repo</string>
     <string name="add_spec_branch_label">Ветка</string>
     <string name="add_spec_branch_placeholder">Выберите ветку</string>
     <string name="add_spec_path_label">Путь до спецификации</string>

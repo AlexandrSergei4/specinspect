@@ -35,8 +35,12 @@
     <string name="settings_theme_dark">Dark</string>
 
     <string name="add_spec_title">Add specification</string>
+    <string name="add_spec_source_personal">Personal</string>
+    <string name="add_spec_source_public">Public</string>
     <string name="add_spec_repository_label">Repository</string>
     <string name="add_spec_repository_placeholder">Select repository</string>
+    <string name="add_spec_public_repository_label">Public repository</string>
+    <string name="add_spec_public_repository_placeholder">https://github.com/owner/repo</string>
     <string name="add_spec_branch_label">Branch</string>
     <string name="add_spec_branch_placeholder">Select branch</string>
     <string name="add_spec_path_label">Specification path</string>

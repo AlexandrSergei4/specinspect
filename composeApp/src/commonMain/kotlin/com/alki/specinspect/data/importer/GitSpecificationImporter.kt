@@ -23,6 +23,7 @@ data class AvailableGitRepository(
 
 interface GitSpecificationImporter {
     suspend fun loadRepositories(userAccessToken: String): List<AvailableGitRepository>
+    suspend fun loadRepository(repositoryUrl: String, userAccessToken: String): AvailableGitRepository
     suspend fun loadBranches(repositoryUrl: String, userAccessToken: String): List<String>
     suspend fun importSpecification(request: GitSpecificationImportRequest): List<ImportedSpecFile>
 }
@@ -30,6 +31,10 @@ interface GitSpecificationImporter {
 class UnsupportedGitSpecificationImporter : GitSpecificationImporter {
 
     override suspend fun loadRepositories(userAccessToken: String): List<AvailableGitRepository> {
+        localizedError(AppTextKey.ErrorImportUnsupported)
+    }
+
+    override suspend fun loadRepository(repositoryUrl: String, userAccessToken: String): AvailableGitRepository {
         localizedError(AppTextKey.ErrorImportUnsupported)
     }
 

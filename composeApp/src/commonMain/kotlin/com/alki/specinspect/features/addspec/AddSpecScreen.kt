@@ -63,8 +63,12 @@ import specinspect.composeapp.generated.resources.add_spec_name_label
 import specinspect.composeapp.generated.resources.add_spec_name_placeholder
 import specinspect.composeapp.generated.resources.add_spec_path_label
 import specinspect.composeapp.generated.resources.add_spec_path_placeholder
+import specinspect.composeapp.generated.resources.add_spec_public_repository_label
+import specinspect.composeapp.generated.resources.add_spec_public_repository_placeholder
 import specinspect.composeapp.generated.resources.add_spec_repository_label
 import specinspect.composeapp.generated.resources.add_spec_repository_placeholder
+import specinspect.composeapp.generated.resources.add_spec_source_personal
+import specinspect.composeapp.generated.resources.add_spec_source_public
 import specinspect.composeapp.generated.resources.add_spec_submit
 import specinspect.composeapp.generated.resources.add_spec_title
 import specinspect.composeapp.generated.resources.add_spec_token_label
@@ -89,26 +93,7 @@ fun AddSpecScreen(component: AddSpecComponent) {
         ) {
             AppTopBar(title = stringResource(Res.string.add_spec_title), onBack = component::onBack)
 
-            WhiteCard {
-                TokenField(
-                    value = state.userAccessToken,
-                    onValueChange = component::onUserAccessTokenChanged,
-                    onGenerateClick = component::onGenerateToken,
-                )
-            }
-
-            WhiteCard {
-                DropdownField(
-                    label = stringResource(Res.string.add_spec_repository_label),
-                    placeholder = stringResource(Res.string.add_spec_repository_placeholder),
-                    value = state.repositoryUrl,
-                    options = state.repositories.map { it.fullName },
-                    enabled = state.repositories.isNotEmpty() && !state.isRepositoriesLoading,
-                    supportingText = state.repositoriesStatusMessage,
-                    supportingTextIsError = state.repositoriesStatusIsError,
-                    onValueChange = component::onRepositoryUrlChanged,
-                )
-            }
+            RepositorySourceCard(state = state, component = component)
 
             WhiteCard {
                 DropdownField(
@@ -198,6 +183,105 @@ fun AddSpecScreen(component: AddSpecComponent) {
                 isShimmering = state.isLoading,
             )
         }
+    }
+}
+
+@Composable
+private fun RepositorySourceCard(
+    state: AddSpecState,
+    component: AddSpecComponent,
+) {
+    WhiteCard {
+        RepositorySourceTabs(
+            selected = state.repositorySource,
+            onSelected = component::onRepositorySourceChanged,
+        )
+        Spacer(Modifier.height(18.dp))
+        when (state.repositorySource) {
+            AddSpecRepositorySource.Personal -> {
+                TokenField(
+                    value = state.userAccessToken,
+                    onValueChange = component::onUserAccessTokenChanged,
+                    onGenerateClick = component::onGenerateToken,
+                )
+                Spacer(Modifier.height(18.dp))
+                DropdownField(
+                    label = stringResource(Res.string.add_spec_repository_label),
+                    placeholder = stringResource(Res.string.add_spec_repository_placeholder),
+                    value = state.repositoryUrl,
+                    options = state.repositories.map { it.fullName },
+                    enabled = state.repositories.isNotEmpty() && !state.isRepositoriesLoading,
+                    supportingText = state.repositoriesStatusMessage,
+                    supportingTextIsError = state.repositoriesStatusIsError,
+                    onValueChange = component::onRepositoryUrlChanged,
+                )
+            }
+            AddSpecRepositorySource.Public -> {
+                LabeledField(
+                    label = stringResource(Res.string.add_spec_public_repository_label),
+                    placeholder = stringResource(Res.string.add_spec_public_repository_placeholder),
+                    value = state.publicRepositoryUrl,
+                    onValueChange = component::onPublicRepositoryUrlChanged,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun RepositorySourceTabs(
+    selected: AddSpecRepositorySource,
+    onSelected: (AddSpecRepositorySource) -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(44.dp)
+            .clip(RoundedCornerShape(14.dp))
+            .background(AppColors.Surface2)
+            .padding(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        RepositorySourceTab(
+            text = stringResource(Res.string.add_spec_source_personal),
+            selected = selected == AddSpecRepositorySource.Personal,
+            onClick = { onSelected(AddSpecRepositorySource.Personal) },
+            modifier = Modifier.weight(1f),
+        )
+        RepositorySourceTab(
+            text = stringResource(Res.string.add_spec_source_public),
+            selected = selected == AddSpecRepositorySource.Public,
+            onClick = { onSelected(AddSpecRepositorySource.Public) },
+            modifier = Modifier.weight(1f),
+        )
+    }
+}
+
+@Composable
+private fun RepositorySourceTab(
+    text: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .clip(RoundedCornerShape(10.dp))
+            .background(if (selected) AppColors.White else AppColors.Surface2)
+            .border(
+                width = 1.dp,
+                color = if (selected) AppColors.CardBorderStrong else AppColors.Surface2,
+                shape = RoundedCornerShape(10.dp),
+            )
+            .clickable { onClick() },
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.titleSmall,
+            color = if (selected) AppColors.Dark else AppColors.GreyViolet,
+        )
     }
 }
 

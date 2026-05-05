@@ -24,6 +24,7 @@ class GitHubContentsSpecificationImporter(
 
     private val json = Json { ignoreUnknownKeys = true }
     private val repositoriesCache = mutableMapOf<String, List<AvailableGitRepository>>()
+    private val repositoryCache = mutableMapOf<RepositoryCacheKey, AvailableGitRepository>()
     private val branchesCache = mutableMapOf<BranchesCacheKey, List<String>>()
 
     override suspend fun loadRepositories(userAccessToken: String): List<AvailableGitRepository> {
@@ -52,10 +53,29 @@ class GitHubContentsSpecificationImporter(
         return repositories
     }
 
+    override suspend fun loadRepository(repositoryUrl: String, userAccessToken: String): AvailableGitRepository {
+        val token = userAccessToken.trim()
+        val repository = parseGitHubRepository(repositoryUrl)
+        val cacheKey = RepositoryCacheKey(token = token, repository = repository.owner + "/" + repository.repo)
+        repositoryCache[cacheKey]?.let { return it }
+
+        val response = client.get("https://api.github.com/repos/${repository.owner}/${repository.repo}") {
+            applyGitHubHeaders(token)
+        }
+        val body = response.bodyAsText()
+        ensureSuccess(response.status, body)
+        val payload = json.parseToJsonElement(body).jsonObject
+        val availableRepository = AvailableGitRepository(
+            fullName = payload["full_name"]?.jsonPrimitive?.contentOrNull
+                ?: "${repository.owner}/${repository.repo}",
+            defaultBranch = payload["default_branch"]?.jsonPrimitive?.contentOrNull.orEmpty(),
+        )
+        repositoryCache[cacheKey] = availableRepository
+        return availableRepository
+    }
+
     override suspend fun loadBranches(repositoryUrl: String, userAccessToken: String): List<String> {
         val token = userAccessToken.trim()
-        if (token.isEmpty()) localizedError(AppTextKey.ErrorTokenRequired)
-
         val repository = parseGitHubRepository(repositoryUrl)
         val cacheKey = BranchesCacheKey(token = token, repository = repository.owner + "/" + repository.repo)
         branchesCache[cacheKey]?.let { return it }
@@ -81,7 +101,6 @@ class GitHubContentsSpecificationImporter(
         val token = request.userAccessToken.trim()
 
         if (branch.isEmpty()) localizedError(AppTextKey.ErrorBranchRequired)
-        if (token.isEmpty()) localizedError(AppTextKey.ErrorTokenRequired)
 
         return collectSpecFiles(
             repository = repository,
@@ -199,7 +218,9 @@ class GitHubContentsSpecificationImporter(
         token: String,
         includeAccept: Boolean = true,
     ) {
-        header(HttpHeaders.Authorization, "Bearer $token")
+        if (token.isNotBlank()) {
+            header(HttpHeaders.Authorization, "Bearer $token")
+        }
         if (includeAccept) {
             header(HttpHeaders.Accept, "application/vnd.github+json")
         }
@@ -246,6 +267,11 @@ private data class GitHubContentEntry(
     val type: String,
     val name: String,
     val path: String,
+)
+
+private data class RepositoryCacheKey(
+    val token: String,
+    val repository: String,
 )
 
 private data class BranchesCacheKey(
